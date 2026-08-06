@@ -19,9 +19,9 @@ if "%MY_IP%"=="" (
 )
 
 echo.
-echo 正在背景啟動 HTTP 伺服器 (通訊埠 8000)...
-:: 啟動 Python HTTP 伺服器並綁定 0.0.0.0 讓外網/區域網路可存取
-start /b python -m http.server 8000 --bind 0.0.0.0 > nul 2>&1
+echo 正在背景啟動互動 API 伺服器 (通訊埠 8000)...
+:: 啟動自訂的 python server.py
+start /b python server.py > nul 2>&1
 
 :: 等待一秒讓伺服器完全就緒
 timeout /t 2 /nobreak > nul

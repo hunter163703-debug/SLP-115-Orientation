@@ -322,11 +322,52 @@ const connectedCount = document.getElementById("connectedCount");
 const roomCodeEl = document.getElementById("roomCode");
 const qrcodeUrlText = document.getElementById("qrcodeUrlText");
 
+// 檢測是否為本地模式 (IP 位址或 localhost 運作)
+const isLocalMode = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' || 
+                     window.location.hostname.match(/^\d+\.\d+\.\d+\.\d+$/);
+
 // 初始化應用程式
 function initApp() {
   generateProgressDots();
   initVotesData();
-  setupWebRTC();
+  
+  if (isLocalMode) {
+    // 本地模式：不啟動 PeerJS，改用 API 輪詢
+    connectionDot.className = "status-dot green";
+    connectionText.textContent = "即時連線已就緒 (本地區域網模式)";
+    
+    // 隱藏在本地不需要的代碼面板元件
+    const codeBox = document.querySelector(".connection-code-box");
+    if (codeBox) codeBox.style.display = "none";
+    
+    // 計算本地學生連結 (同 IP 網址)
+    let baseURL = window.location.origin + window.location.pathname;
+    if (baseURL.endsWith("index.html")) {
+      baseURL = baseURL.replace("index.html", "");
+    }
+    if (!baseURL.endsWith("/")) {
+      baseURL += "/";
+    }
+    const studentUrl = `${baseURL}student.html`;
+    qrcodeUrlText.textContent = studentUrl;
+
+    // 繪製 QR Code
+    document.getElementById("qrcode").innerHTML = "";
+    new QRCode(document.getElementById("qrcode"), {
+      text: studentUrl,
+      width: 160,
+      height: 160,
+      colorDark: "#1A202C",
+      colorLight: "#FFFFFF",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    setupLocalServerPolling();
+  } else {
+    setupWebRTC();
+  }
+  
   renderQuestion();
 }
 
@@ -605,24 +646,33 @@ function jumpToQuestion(index) {
   state.currentQuestion = index;
   renderQuestion();
   
-  // 向所有學生同步當前題目
-  const q = quizData[index];
-  activeConnections.forEach((conn) => {
-    if (conn.open) {
-      const studentChosen = getStudentVoteForQuestion(conn.peer, index);
-      conn.send({
-        type: "CHANGE_QUESTION",
-        currentQuestion: index,
-        question: q,
-        voteClosed: state.voteClosed[index],
-        revealed: state.revealed[index],
-        chosen: studentChosen,
-        correct: state.revealed[index] ? q.correct : null,
-        explanation: state.revealed[index] ? q.explanation : null,
-        meme: state.revealed[index] ? q.meme : null
-      });
-    }
-  });
+  if (isLocalMode) {
+    // 本地模式：發送 API 進行同步
+    fetch('/api/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'change_question', index: index })
+    }).catch(err => console.error("Control API error:", err));
+  } else {
+    // 向所有學生同步當前題目
+    const q = quizData[index];
+    activeConnections.forEach((conn) => {
+      if (conn.open) {
+        const studentChosen = getStudentVoteForQuestion(conn.peer, index);
+        conn.send({
+          type: "CHANGE_QUESTION",
+          currentQuestion: index,
+          question: q,
+          voteClosed: state.voteClosed[index],
+          revealed: state.revealed[index],
+          chosen: studentChosen,
+          correct: state.revealed[index] ? q.correct : null,
+          explanation: state.revealed[index] ? q.explanation : null,
+          meme: state.revealed[index] ? q.meme : null
+        });
+      }
+    });
+  }
 }
 
 // 渲染大螢幕當前題目與投票進度
@@ -748,14 +798,23 @@ function revealAnswer() {
   dot.classList.remove("answered");
   dot.classList.add("revealed-correct");
 
-  // 向所有學生廣播答案與解析
-  broadcast({
-    type: "REVEAL_ANSWER",
-    questionIdx: currentIdx,
-    correct: q.correct,
-    explanation: q.explanation,
-    meme: q.meme
-  });
+  if (isLocalMode) {
+    // 本地模式：發送 API 公佈解答
+    fetch('/api/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reveal_answer' })
+    }).catch(err => console.error("Control API error:", err));
+  } else {
+    // 向所有學生廣播答案與解析
+    broadcast({
+      type: "REVEAL_ANSWER",
+      questionIdx: currentIdx,
+      correct: q.correct,
+      explanation: q.explanation,
+      meme: q.meme
+    });
+  }
 
   // 重新渲染以套用 blink 動畫
   renderQuestion();
@@ -954,13 +1013,22 @@ function restartQuiz() {
   initDomElements();
   // 重新初始化投票數據
   initVotesData();
-  // 重建 WebRTC Peer
-  if (peer) {
-    peer.destroy();
+  if (isLocalMode) {
+    fetch('/api/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'restart' })
+    }).catch(err => console.error("Control API error:", err));
+    renderQuestion();
+  } else {
+    // 重建 WebRTC Peer
+    if (peer) {
+      peer.destroy();
+    }
+    setupWebRTC();
+    // 渲染
+    renderQuestion();
   }
-  setupWebRTC();
-  // 渲染
-  renderQuestion();
 }
 
 // 重新抓取 DOM 元素的輔助函數
@@ -995,6 +1063,51 @@ function initDomElements() {
   globalThis.connectedCount = document.getElementById("connectedCount");
   globalThis.roomCodeEl = document.getElementById("roomCode");
   globalThis.qrcodeUrlText = document.getElementById("qrcodeUrlText");
+}
+
+// 本地模式 API 輪詢實作
+let localPollingTimer = null;
+function setupLocalServerPolling() {
+  if (localPollingTimer) clearInterval(localPollingTimer);
+  pollLocalState();
+  localPollingTimer = setInterval(pollLocalState, 800);
+}
+
+function pollLocalState() {
+  fetch('/api/state')
+    .then(res => res.json())
+    .then(data => {
+      const currentIdx = state.currentQuestion;
+      const serverVotes = data.votes[currentIdx] || { A: 0, B: 0 };
+      const localVotes = state.votes[currentIdx];
+      
+      const localCountA = localVotes.A.length;
+      const localCountB = localVotes.B.length;
+
+      // 如果伺服器票數有更新，觸發跑馬燈動畫與 Bump 特效
+      if (serverVotes.A > localCountA) {
+        for (let i = localCountA; i < serverVotes.A; i++) {
+          localVotes.A.push(`local-student-A-${i}`);
+        }
+        animateTicketIncrement(countA, serverVotes.A);
+      }
+      if (serverVotes.B > localCountB) {
+        for (let i = localCountB; i < serverVotes.B; i++) {
+          localVotes.B.push(`local-student-B-${i}`);
+        }
+        animateTicketIncrement(countB, serverVotes.B);
+      }
+
+      // 同步截止狀態
+      if (data.voteClosed && !state.voteClosed[currentIdx]) {
+        state.voteClosed[currentIdx] = true;
+        voteClosedTag.style.display = "block";
+        voteClosedTag.textContent = `🚫 本題投票已截止！累計投出 ${serverVotes.A + serverVotes.B} 票`;
+      }
+
+      updateVoteGraphics(currentIdx);
+    })
+    .catch(err => console.error("Poll local state error:", err));
 }
 
 // 頁面加載完成後啟動
