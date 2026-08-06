@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你以為的語言治療師 VS. 真正的語言治療師 - 職涯探索挑戰</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Include PeerJS and QRCode.js from CDNs -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- Memphis Background Elements -->
+  <div class="bg-shape bg-shape-1"></div>
+  <div class="bg-shape bg-shape-2"></div>
+  <div class="bg-shape bg-shape-3"></div>
+
+  <div class="app-container">
+    <!-- Real-time Connectivity Bar -->
+    <div class="status-bar">
+      <div class="status-indicator">
+        <span class="status-dot green" id="connectionDot"></span>
+        <span id="connectionText">正在初始化即時連線...</span>
+      </div>
+      <div class="student-count">
+        👥 已連線學生：<span id="connectedCount" class="badge">0</span> 人
+      </div>
+    </div>
+
+    <!-- Main Flex Layout for Presentation Screen -->
+    <div class="presentation-layout">
+      <!-- Left: Quiz Content -->
+      <div class="quiz-area">
+        <header>
+          <h1 class="main-title">你以為的語言治療師 VS. 真正的語言治療師</h1>
+          <p class="subtitle">115學年度新生定向職涯探索互動挑戰 (教師投影端)</p>
+        </header>
+
+        <!-- Navigation & Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-dots" id="progressDots"></div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+        </div>
+
+        <!-- Active Question Section -->
+        <main class="question-section">
+          <div class="question-header">
+            <div class="question-number" id="questionNumber">Q1</div>
+            <h2 class="question-text" id="questionText">載入中...</h2>
+          </div>
+
+          <!-- Real-time Vote Progress (Total 50 target) -->
+          <div class="vote-progress-wrapper">
+            <div class="vote-progress-info">
+              <span>📊 答題進度 (超過 50 票截止，總共 80 人)</span>
+              <span id="voteCountText" class="vote-count-text">目前票數：0 / 50 票</span>
+            </div>
+            <div class="vote-progress-track">
+              <div class="vote-progress-fill" id="voteProgressFill"></div>
+              <div class="vote-progress-deadline-marker">50票</div>
+            </div>
+            <div class="vote-closed-tag" id="voteClosedTag">🚫 本題投票已截止</div>
+          </div>
+
+          <!-- Two Option Cards -->
+          <div class="options-grid" id="optionsGrid">
+            <!-- Option Card A -->
+            <div class="option-card" id="optionA" onclick="teacherVote('A')">
+              <div class="option-badge">A</div>
+              <div class="option-illust" id="illustA"></div>
+              <div class="option-text" id="textA">選項 A 載入中...</div>
+              
+              <!-- Vote Result -->
+              <div class="vote-result-container">
+                <div class="vote-bar-wrapper">
+                  <div class="vote-bar-fill" id="barA"></div>
+                </div>
+                <div class="vote-numeric-display">
+                  <span class="vote-count" id="countA">0</span> 票
+                  <span class="vote-percentage" id="percentA">(0%)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Option Card B -->
+            <div class="option-card" id="optionB" onclick="teacherVote('B')">
+              <div class="option-badge">B</div>
+              <div class="option-illust" id="illustB"></div>
+              <div class="option-text" id="textB">選項 B 載入中...</div>
+
+              <!-- Vote Result -->
+              <div class="vote-result-container">
+                <div class="vote-bar-wrapper">
+                  <div class="vote-bar-fill" id="barB"></div>
+                </div>
+                <div class="vote-numeric-display">
+                  <span class="vote-count" id="countB">0</span> 票
+                  <span class="vote-percentage" id="percentB">(0%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Explanation / Meme Section (Accordion style) -->
+          <div class="explanation-section" id="explanationSection">
+            <div class="explanation-title">
+              <span>💡</span>
+              <span>解析與思維點</span>
+            </div>
+            <p class="explanation-text" id="explanationText">這裡會顯示答案解析與迷因點...</p>
+            <div class="meme-box" id="memeBox"></div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Right: QR Code Panel for Student Joining -->
+      <div class="qrcode-panel">
+        <div class="qrcode-card">
+          <h3 class="qrcode-title">📲 學生加入投票</h3>
+          <p class="qrcode-desc">請學生用手機掃描下方 QR Code，即可同步參與每一題的即時投票！</p>
+          
+          <div class="qrcode-container-wrapper">
+            <div id="qrcode" class="qrcode-box"></div>
+          </div>
+          
+          <div class="connection-code-box">
+            <span class="code-label">連線代碼</span>
+            <div class="code-value" id="roomCode">----</div>
+          </div>
+          <p class="qrcode-url-text" id="qrcodeUrlText">正在取得上線網址...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Controls Panel -->
+    <div class="controls-panel">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" disabled>
+        ← 上一題
+      </button>
+      
+      <button class="btn btn-primary" id="revealBtn" onclick="revealAnswer()" disabled>
+        📢 顯示解答
+      </button>
+      
+      <button class="btn btn-success" id="nextBtn" onclick="nextQuestion()">
+        下一題 →
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <p>115學年度亞洲大學聽語系 新生入學定向輔導-用專業打開溝通的大門 林樺鋒老師製</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

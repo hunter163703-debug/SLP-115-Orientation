@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>認識語言治療師 - 學生投票端</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body class="student-body">
+
+  <div class="bg-shape bg-shape-1" style="width: 80px; height: 80px; top: 5%; left: 5%;"></div>
+  <div class="bg-shape bg-shape-2" style="width: 100px; height: 40px; bottom: 5%; right: 5%;"></div>
+
+  <div class="app-container student-container">
+    <!-- Header -->
+    <header style="margin-bottom: 1.5rem; text-align: center;">
+      <h2 style="font-size: 1.5rem; font-weight: 900;">聽語系新生定向互動挑戰</h2>
+      <p class="subtitle" style="font-size: 0.9rem;">📲 學生投票端</p>
+    </header>
+
+    <!-- Connection Status -->
+    <div class="student-status-indicator" id="connStatus">
+      🔍 正在尋找教師投影幕...
+    </div>
+
+    <!-- Manual Connection Form (Fallback in case QR scan misses the query parameter) -->
+    <div id="manualConnectBox" style="display: none; border: 2px solid var(--border-color); padding: 1rem; border-radius: 12px; background-color: var(--accent-yellow); margin-bottom: 1.5rem; text-align: center;">
+      <p style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">輸入大螢幕上的 4 位連線代碼：</p>
+      <div style="display: flex; gap: 0.5rem; justify-content: center;">
+        <input type="text" id="manualCodeInput" maxlength="4" style="width: 100px; padding: 0.4rem; font-size: 1.2rem; text-align: center; border: 2px solid var(--border-color); border-radius: 6px; font-weight: 800; text-transform: uppercase;">
+        <button class="btn btn-primary" onclick="connectManually()" style="padding: 0.4rem 1rem; font-size: 0.95rem; box-shadow: 2px 2px 0px var(--border-color);">連線</button>
+      </div>
+    </div>
+
+    <!-- Current Question Form -->
+    <div id="activeQuizArea" style="display: none;">
+      <div class="question-header" style="margin-bottom: 1.25rem;">
+        <div class="question-number" id="qNum">Q1</div>
+        <h3 class="question-text" id="qText" style="font-size: 1.2rem; font-weight: 800;">載入題目中...</h3>
+      </div>
+
+      <!-- Voting Options (List for Mobile layout) -->
+      <div id="optionsContainer">
+        <!-- Option A -->
+        <div class="student-card" id="btnOptA" onclick="submitVote('A')">
+          <div class="student-badge">A</div>
+          <div class="student-card-text" id="labelOptA">選項 A 載入中...</div>
+        </div>
+
+        <!-- Option B -->
+        <div class="student-card" id="btnOptB" onclick="submitVote('B')">
+          <div class="student-badge">B</div>
+          <div class="student-card-text" id="labelOptB">選項 B 載入中...</div>
+        </div>
+      </div>
+
+      <!-- Voting Result Feedbacks -->
+      <div id="voteFeedback" style="display: none; background-color: var(--accent-blue); border: 2px solid var(--border-color); padding: 1rem; border-radius: 12px; font-weight: 700; text-align: center; font-size: 1rem;">
+        📥 投票已送出，等待老師公佈答案...
+      </div>
+
+      <!-- Answer Revealed Result Sheet -->
+      <div class="explanation-section" id="studentExplanation" style="transition: none; display: none;">
+        <div class="explanation-title" id="evalTitle" style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">
+          <!-- Will show correct/incorrect status -->
+        </div>
+        <p class="explanation-text" id="studentExplanationText" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-muted);"></p>
+        <div class="meme-box" id="studentMeme" style="margin-top: 0.75rem; font-size: 0.85rem; padding: 0.75rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="margin-top: 2rem;">
+    <p>© 115學年度 聽力暨語言治療學系 · 互動投票</p>
+  </footer>
+
+  <script src="student.js"></script>
+</body>
+</html>
