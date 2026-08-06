@@ -28,8 +28,19 @@ window.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
   const hostId = urlParams.get("hostId");
 
-  // 初始化 Peer
+  // 初始化 Peer，明確設定 wss 443 埠與 STUN 伺服器
   peer = new Peer({
+    host: '0.peerjs.com',
+    port: 443,
+    secure: true,
+    pingInterval: 3000,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' }
+      ]
+    },
     debug: 1
   });
 
