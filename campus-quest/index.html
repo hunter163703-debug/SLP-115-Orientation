@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>聽語星航記 - 互動闖關</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Film Grain Overlay -->
+  <div class="film-grain"></div>
+
+  <!-- Cover Page -->
+  <div id="coverPage" class="cover-page">
+    <div class="cover-bg" style="background-image: url('聽語10問闖關封面.png');"></div>
+    <div class="cover-overlay"></div>
+    <div class="cover-content">
+      <h1 class="cover-title">聽語星航記</h1>
+      <p class="cover-subtitle">亞洲大學聽力暨語言治療學系 - 課程導覽</p>
+      <button class="start-btn" onclick="startGame()">
+        開始探索 <span class="btn-icon">🚀</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Map Application -->
+  <div id="appContainer" class="app-container hidden">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <h1 class="main-title">聽語星航記</h1>
+        <p class="subtitle">跟著聽語小熊一起解鎖校園關卡！</p>
+      </div>
+      <div class="header-right">
+        <div class="progress-indicator">
+          進度 <span id="currentStageNum">1</span>/10
+        </div>
+      </div>
+    </header>
+
+    <!-- Map Area (Scrollable to reveal bottom of the map) -->
+    <main class="map-area">
+      <!-- Added an inner container with a fixed aspect ratio or height so the background can scroll if the window is small -->
+      <div class="grid-map" id="gridMap">
+        <!-- Background map -->
+        <div class="map-bg-image" style="background-image: url('聽語10問闖關封面.png'); opacity: 0.9;"></div>
+        <div class="map-bg-overlay"></div>
+
+        <!-- Dynamic SVG Path overlay -->
+        <svg class="map-line-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path id="mapActivePath" d="" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="6,6" stroke-linecap="round" />
+          <path id="mapProgressPath" d="" fill="none" stroke="var(--accent-yellow)" stroke-width="3" stroke-linecap="round" class="progress-trail" />
+        </svg>
+
+        <!-- 10 Nodes Container -->
+        <div class="map-nodes-container" id="nodesContainer">
+          <!-- JavaScript will inject nodes here -->
+        </div>
+
+        <!-- The Floating Student Avatar character -->
+        <div class="student-avatar" id="studentAvatar">
+          <div class="avatar-speech-bubble" id="avatarSpeech">準備出發囉！</div>
+          <div class="avatar-portrait-frame">
+            <img src="聽語小熊.png" alt="SLP Bear Character">
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Location Modal / Q&A Overlay (Glassmorphism) -->
+  <div id="locationModal" class="modal-overlay hidden">
+    <div class="modal-container">
+      
+      <!-- Top Section: Location Photo -->
+      <div class="modal-photo-section">
+        <img id="modalLocationPhoto" src="" alt="Location">
+        <div class="photo-overlay-gradient"></div>
+        <div class="photo-header">
+          <span class="q-badge" id="modalQId">Q1</span>
+          <h2 class="modal-location-title" id="modalLocationTitle">地標名稱</h2>
+        </div>
+      </div>
+
+      <!-- Bottom Section: Q&A Content -->
+      <div class="modal-content-section" id="modalContentArea">
+        
+        <!-- Q&A State -->
+        <div id="qaState" class="qa-state active-state">
+          <h3 class="question-text" id="modalQText">題目載入中...</h3>
+          <div class="options-container">
+            <button class="option-button" id="optionBtnA" onclick="selectOption('A')">
+              <span class="opt-label">A</span>
+              <span class="opt-text" id="modalOptA">選項 A</span>
+            </button>
+            <button class="option-button" id="optionBtnB" onclick="selectOption('B')">
+              <span class="opt-label">B</span>
+              <span class="opt-text" id="modalOptB">選項 B</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Result State -->
+        <div id="resultState" class="result-state hidden-state">
+          <div class="result-header">
+            <span class="result-icon">💡</span>
+            <span class="result-title">解析與討論</span>
+          </div>
+          <div class="explanation-scroll-area">
+            <!-- A and B Explanations injected here -->
+            <p class="explanation-text" id="modalExplanationA" style="display:none;">A 解析內容...</p>
+            <p class="explanation-text" id="modalExplanationB" style="display:none;">B 解析內容...</p>
+          </div>
+          <div class="modal-actions">
+            <!-- Map Button (Dynamic) -->
+            <button class="map-btn hidden" id="mapBtn" onclick="openMapModal()">
+              <span class="btn-icon">🗺️</span> <span id="mapBtnText">課程地圖</span>
+            </button>
+
+            <!-- Go back to options button -->
+            <button class="back-btn" id="backBtn" onclick="backToOptions()">🔙 回上一步</button>
+            
+            <button class="next-level-btn" id="nextLevelBtn" onclick="closeLocationModal()">繼續前進 🚀</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Full Screen Map Viewer Modal -->
+  <div id="fullMapModal" class="modal-overlay hidden" style="z-index: 2000;" onclick="closeMapModal()">
+    <div class="full-map-container" onclick="event.stopPropagation()">
+      <button class="close-map-btn" onclick="closeMapModal()">✖ 關閉地圖</button>
+      <img id="fullMapImg" src="" alt="Reference Map">
+    </div>
+  </div>
+
+  <!-- Summary Card Overlay for End of Game -->
+  <div id="summaryOverlay" class="modal-overlay hidden">
+    <div class="modal-container summary-card">
+      <div class="avatar-portrait-frame large-avatar">
+        <img src="聽語小熊.png" alt="SLP Bear Graduate">
+      </div>
+      <h2 class="summary-title">🎉 闖關成功！</h2>
+      <p class="summary-text">你已經成功走過亞大聽語系的 10 大校園地標，解開了所有課程與職涯的奧秘！未來的四年，跟著黃金地圖走，你定能成為業界頂尖的雙棲專家！</p>
+      <button class="next-level-btn" onclick="location.reload()">🔄 再玩一次</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
