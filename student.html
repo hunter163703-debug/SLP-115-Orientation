@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>認識語言治療師 - 學生投票端</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body class="student-body">
 
@@ -21,16 +22,7 @@
 
     <!-- Connection Status -->
     <div class="student-status-indicator" id="connStatus">
-      🔍 正在尋找教師投影幕...
-    </div>
-
-    <!-- Manual Connection Form (Fallback in case QR scan misses the query parameter) -->
-    <div id="manualConnectBox" style="display: none; border: 2px solid var(--border-color); padding: 1rem; border-radius: 12px; background-color: var(--accent-yellow); margin-bottom: 1.5rem; text-align: center;">
-      <p style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">輸入大螢幕上的 4 位連線代碼：</p>
-      <div style="display: flex; gap: 0.5rem; justify-content: center;">
-        <input type="text" id="manualCodeInput" maxlength="4" style="width: 100px; padding: 0.4rem; font-size: 1.2rem; text-align: center; border: 2px solid var(--border-color); border-radius: 6px; font-weight: 800; text-transform: uppercase;">
-        <button class="btn btn-primary" onclick="connectManually()" style="padding: 0.4rem 1rem; font-size: 0.95rem; box-shadow: 2px 2px 0px var(--border-color);">連線</button>
-      </div>
+      🔍 正在連線雲端資料庫...
     </div>
 
     <!-- Current Question Form -->
@@ -52,6 +44,28 @@
         <div class="student-card" id="btnOptB" onclick="submitVote('B')">
           <div class="student-badge">B</div>
           <div class="student-card-text" id="labelOptB">選項 B 載入中...</div>
+        </div>
+      </div>
+
+      <!-- Live Vote Results (Realtime) -->
+      <div id="liveResults" style="margin-top: 1rem; background-color: #FFFFFF; border: 2px solid var(--border-color); border-radius: 12px; padding: 0.9rem 1rem; box-shadow: 3px 3px 0px var(--border-color);">
+        <div style="font-weight: 800; font-size: 0.85rem; margin-bottom: 0.55rem; display: flex; justify-content: space-between;">
+          <span>📊 即時投票狀況</span>
+          <span id="liveTotal">共 0 票</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem;">
+          <span style="font-weight: 900; min-width: 16px;">A</span>
+          <div style="flex: 1; height: 16px; background-color: #EDF2F7; border-radius: 8px; overflow: hidden;">
+            <div id="liveBarA" style="height: 100%; width: 0%; background-color: #4DB380; transition: width 0.6s ease;"></div>
+          </div>
+          <span id="liveCountA" style="font-weight: 800; font-size: 0.8rem; min-width: 64px; text-align: right;">0 票・0%</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-weight: 900; min-width: 16px;">B</span>
+          <div style="flex: 1; height: 16px; background-color: #EDF2F7; border-radius: 8px; overflow: hidden;">
+            <div id="liveBarB" style="height: 100%; width: 0%; background-color: #7F9FCA; transition: width 0.6s ease;"></div>
+          </div>
+          <span id="liveCountB" style="font-weight: 800; font-size: 0.8rem; min-width: 64px; text-align: right;">0 票・0%</span>
         </div>
       </div>
 

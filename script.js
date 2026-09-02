@@ -1,4 +1,4 @@
-// 10 題認識語言治療師的題目資料庫
+﻿// 10 題認識語言治療師的題目資料庫，包含校園闖關地標與小新生心境台詞
 const quizData = [
   {
     id: 1,
@@ -7,7 +7,10 @@ const quizData = [
     optionB: "陪個案聊天、練習說話，偶爾唱唱歌、玩玩遊戲，讓他們「多講一點」藉此機會持續進步。",
     correct: "A",
     explanation: "語言治療是一門嚴謹的醫療專業。治療師的日常絕非只是單純的陪聊，而是需要精確的臨床評估、制定系統性的計畫，來幫助個案重建溝通與吞嚥功能！",
-    meme: "🤦 學生想像的語言治療師：\n🧸 陪你聊天 + 🗣️ 教你講話 + 🎤 帶你唱歌\n\n💪 真正的語言治療師：\n🔬 專業臨床推理 + 📈 制定科學治療目標 + 👅 吞嚥與發聲功能訓練"
+    meme: "🤦 學生想像的語言治療師：\n🧸 陪你聊天 + 🗣️ 教你講話 + 🎤 帶你唱歌\n\n💪 真正的語言治療師：\n🔬 專業臨床推理 + 📈 制定科學治療目標 + 👅 吞嚥與發聲功能訓練",
+    landmarkName: "管理大樓 (踏出第一步)",
+    coords: { x: 12, y: 80 },
+    dialogText: "第一天入學！聽說聽語系要學解剖？感覺有難度喔...😱"
   },
   {
     id: 2,
@@ -16,7 +19,10 @@ const quizData = [
     optionB: "以兒童與發展階段的語言溝通問題為主要服務對象，成人個案則多集中在神經疾病或重大疾病後的語言與吞嚥問題。",
     correct: "A",
     explanation: "語言治療的服務對象是「全年齡層 (0-100歲)」。從新生兒的餵食困難、兒童的發展遲緩，到成人的中風失語症，再到老年人的吞嚥與退化問題，都是語言治療師的守備範圍！",
-    meme: "👶 嬰幼兒 (餵食與早療) ➔ 👧 兒童 (構音與語言發展) ➔ 👨 成人 (嗓音與口吃) ➔ 👵 長者 (吞嚥與認知溝通)\n💡 沒錯！我們守護的是人的一生中「溝通與享受美食」的權利！"
+    meme: "👶 嬰幼兒 (餵食與早療) ➔ 👧 兒童 (構音與語言發展) ➔ 👨 成人 (嗓音與口吃) ➔ 👵 長者 (吞嚥與認知溝通)\n💡 沒錯！我們守護的是人的一生中「溝通與享受美食」的權利！",
+    landmarkName: "通識大樓 (探索學分)",
+    coords: { x: 25, y: 65 },
+    dialogText: "大一發現原來我們服務的是全年齡！從嬰幼兒到阿公阿嬤都是守備範圍！🍼👵"
   },
   {
     id: 3,
@@ -25,7 +31,10 @@ const quizData = [
     optionB: "不完全是。除了語言之外，還可能涉及構音／說話、嗓音、流暢、社交溝通以及吞嚥等功能。",
     correct: "B",
     explanation: "「語言」與「說話」在專業上是不同的概念！語言治療師除了處理語言（大腦理解與表達）之外，也處理說話（構音、口吃、嗓音）以及「吞嚥」（安全進食）等多元生理與社交溝通功能。",
-    meme: "💬 語言 (Language)：腦袋裡的詞彙與語法理解\n🗣️ 說話 (Speech)：肌肉發出的聲音與流暢度\n🍽️ 吞嚥 (Swallowing)：食物從口中送入胃的生理過程\n🔥 兩者皆是語言治療師的核心專業！"
+    meme: "💬 語言 (Language)：腦袋裡的詞彙與語法理解\n🗣️ 說話 (Speech)：肌肉發出的聲音與流暢度\n🍽️ 吞嚥 (Swallowing)：食物從口中送入胃的生理过程\n🔥 兩者皆是語言治療師的核心專業！",
+    landmarkName: "安藤忠雄美術館 (多元思考)",
+    coords: { x: 45, y: 75 },
+    dialogText: "看這美麗的三角形清水模！大二的專業學科也要像藝術般精雕細琢！🎨"
   },
   {
     id: 4,
@@ -34,7 +43,10 @@ const quizData = [
     optionB: "語言治療師雖然有自己的專業範圍，但實際臨床上常與心理師、職能治療師、物理治療師及醫師合作，共同處理個案的整體需求。",
     correct: "A",
     explanation: "這題是個「陷阱題」，兩者在臨床上都對。但題目問的是「最大的差異（核心專業）」，因此 A 才是正解。語言治療師的核心在於「語言與溝通/吞嚥」，而 B 描述的是「跨專業協作」，並非兩者本質的差異。",
-    meme: "🧠 心理師：專注於心智、情緒與認知調整\n🖐️ 職能治療師 (OT)：專注於生活適應、手部精細動作與感覺統合\n🗣️ 語言治療師 (SLP)：專注於語言、口語溝通、發聲與吞嚥"
+    meme: "🧠 心理師：專注於心智、情緒與認知調整\n🖐️ 職能治療師 (OT)：專注於生活適應、手部精細動作與感覺統合\n🗣️ 語言治療師 (SLP)：專注於語言、口語溝通、發聲與吞嚥",
+    landmarkName: "醫學健康大樓 (聽語系館)",
+    coords: { x: 38, y: 45 },
+    dialogText: "踏入系館！要開始上發聲跟聽力課了，跟 OT、PT 大大不同！🗣️"
   },
   {
     id: 5,
@@ -43,7 +55,10 @@ const quizData = [
     optionB: "工作場域相當多元，除了醫院與診所，也可能進入學校、早療、長照及其他相關機構，並依場域接觸不同年齡與類型的個案。",
     correct: "B",
     explanation: "大一新生常以為畢業後只能待在醫院。實際上，語言治療師的工作場域極度多元，包含特教學校、早期療育機構、行動長照團隊、行動不便個案的居家服務，甚至是自行開設治療所！",
-    meme: "🏥 醫院/診所 (醫療系統) \n🏫 幼兒園/特教學校 (教育系統)\n🏡 長照機構/居家服務 (社福系統)\n👐 語言治療所 (私人執業)\n💡 畢業後，你不一定只有穿白袍這一條路！"
+    meme: "🏥 醫院/診所 (醫療系統) \n🏫 幼兒園/特教學校 (教育系統)\n🏡 長照機構/居家服務 (社福系統)\n👐 語言治療所 (私人執業)\n💡 畢業後，你不一定只有穿白袍這一條路！",
+    landmarkName: "阿勃勒黃金大道 (多元出路)",
+    coords: { x: 55, y: 55 },
+    dialogText: "走在大三金黃大道上！聽語系畢業出路其實超廣，不一定只有醫院這條路！🌟"
   },
   {
     id: 6,
@@ -52,7 +67,10 @@ const quizData = [
     optionB: "先透過遊戲或互動活動建立參與意願，再逐步轉換到較具結構性的語言訓練，讓孩子同時兼顧治療目標與學習規律。",
     correct: "A",
     explanation: "對兒童來說，「遊戲本身就是治療的媒介」。語言治療並非「先玩一下，再上課」，而是將治療目標完美包裝在遊戲中。當孩子玩得開心時，他其實已經在進行高強度的語言訓練了！",
-    meme: "❌ 錯誤觀念：先陪你玩 10 分鐘，接著拿出課本嚴肅上課 30 分鐘。\n✅ 專業玩法：將「發音練習」融入「戳戳樂遊戲」，讓孩子在邊玩邊笑中，不知不覺練習了 50 次目標發音！"
+    meme: "❌ 錯誤觀念：先陪你玩 10 分鐘，接著拿出課本嚴肅上課 30 分鐘。\n✅ 專業玩法：將「發音練習」融入「戳戳樂遊戲」，讓孩子在邊玩邊笑中，不知不覺練習了 50 次目標發音！",
+    landmarkName: "太極湖畔 (遊戲化治療)",
+    coords: { x: 70, y: 65 },
+    dialogText: "在太極湖畔陪個案『玩遊戲』？把發音練習包裝在遊戲中才是真功夫！🦆🎈"
   },
   {
     id: 7,
@@ -61,7 +79,10 @@ const quizData = [
     optionB: "聽他講幾句話就知道了，畢竟語言治療師耳朵很專業，通常「聽一下就知道哪裡怪怪的」。",
     correct: "A",
     explanation: "語言治療是基於實證醫學。我們絕非只憑「感覺」或隨便聽兩句下診斷，而是透過國際或本土標準化評估工具、個案史晤談、跨領域報告，再進行精密的臨床推理與分析。",
-    meme: "👂 學生想像的治療師：「嗯……聽你講這句，你構音異常喔！」(人形語音辨識器？)\n📝 真正的語言治療師：晤談 + 標準化量表測驗 + 口語樣本分析 + 口腔結構檢查 ➔ 綜合臨床診斷"
+    meme: "👂 學生想像的治療師：「嗯……聽你講這句，你構音異常喔！」(人形語音辨識器？)\n📝 真正的語言治療師：晤談 + 標準化量表測驗 + 口語樣本分析 + 口腔結構檢查 ➔ 綜合臨床診斷",
+    landmarkName: "亞洲大學附屬醫院 (實習之旅)",
+    coords: { x: 88, y: 40 },
+    dialogText: "大四到亞大附醫實習了！穿上實習白袍，一定要認真做臨床評估！🏥"
   },
   {
     id: 8,
@@ -70,7 +91,10 @@ const quizData = [
     optionB: "有一套「語言治療萬用招式」，看到什麼問題就照表操課，大家一起念、一起說、一起練就好了。",
     correct: "A",
     explanation: "每個個案都是獨一無二的！語言治療沒有「萬用偏方」。治療師必須針對個案的興趣、家庭支持度、生理限制等，客製化設計「個別化治療計畫 (IEP)」，才能發揮最大成效。",
-    meme: "❌ 語言治療師萬能咒語：「來，跟我念一次！」、「對，再念一次！」\n✅ 實證治療金字塔：\nAssessment (評估) ➔ Reasoning (推理) ➔ Goal Setting (設定目標) ➔ Intervention (客製化介入) ➔ Re-evaluation (再評估)"
+    meme: "❌ 語言治療師萬能咒語：「來，跟我念一次！」、「對，再念一次！」\n✅ 實證治療金字塔：\nAssessment (評估) ➔ Reasoning (推理) ➔ Goal Setting (設定目標) ➔ Intervention (客製化介入) ➔ Re-evaluation (再評估)",
+    landmarkName: "附醫實習病房 (個別計畫)",
+    coords: { x: 75, y: 22 },
+    dialogText: "為個案制定客製化的 IEP 治療計畫，每一筆紀錄都是重大的責任！📝"
   },
   {
     id: 9,
@@ -79,7 +103,10 @@ const quizData = [
     optionB: "只要把治療做好就好了，其他就是行政人員或家長的事情；治療師下課就可以收工。",
     correct: "A",
     explanation: "臨床工作只是語言治療師的一小部分。撰寫病歷紀錄、跨專業團隊會議、與家長進行衛教與家庭作業諮詢、製作客製化教具，這些隱形工作往往佔據了治療師許多心力。",
-    meme: "🧸 學生想像的語言治療師：跟小孩玩 ➔ 陪大人聊天 ➔ 準時打卡下班\n💻 真正的語言治療師：治療 ➔ 寫紀錄 ➔ 製作教材 ➔ 家長諮詢 ➔ 與醫師/老師開會 ➔ 繼續寫病歷"
+    meme: "🧸 學生想像的語言治療師: 跟小孩玩 ➔ 陪大人聊天 ➔ 準時打卡下班\n💻 真正的語言治療師: 治療 ➔ 寫紀錄 ➔ 製作教材 ➔ 家長諮詢 ➔ 與醫師/老師開會 ➔ 繼續寫病歷",
+    landmarkName: "綜合體育場 (大團隊溝通)",
+    coords: { x: 50, y: 15 },
+    dialogText: "不只要做治療，還要在會議上跟醫師、物理治療師團隊跨專業溝通！🏃💬"
   },
   {
     id: 10,
@@ -88,7 +115,10 @@ const quizData = [
     optionB: "畢業後可以依興趣與專業能力選擇不同服務場域與族群，例如醫院、診所、學校、早療、長照等，並在工作中逐步建立自己的專業方向。",
     correct: "B",
     explanation: "大一新生的職涯想像常侷限於醫院。其實語言治療系的出路非常有彈性，你可以在早療中心成為明星治療師，也可以在長照體系深入社區，甚至在科技業參與語音辨識、AAC 輔具開發，職涯廣度超乎想像！",
-    meme: "🚀 傳統路線：畢業 ➔ 進入醫院復健科 ➔ 升任資深治療師\n🌈 現代多元路線：醫療臨床、特教學校支援、社區長照機構、自行創業開設治療所、AI 語音科技顧問"
+    meme: "🚀 傳統路線：畢業 ➔ 進入醫院復健科 ➔ 升任資深治療師\n🌈 現代多元路線：醫療臨床、特教學校支援、社區長照機構、自行創業開設治療所、AI 語音科技顧問",
+    landmarkName: "巴洛克圓頂體育館 (國考金榜)",
+    coords: { x: 20, y: 20 },
+    dialogText: "在巴洛克體育館參加畢業典禮！祝大家順利畢業，國考金榜題名！🏆🎓"
   }
 ];
 
@@ -276,272 +306,179 @@ const illustLibrary = {
 // 狀態管理物件
 let state = {
   currentQuestion: 0,
-  // 結構改變：記錄每一題學生具體投給誰。格式：{ questionIndex: { A: [peerId1, peerId2...], B: [peerId3...] } }
-  votes: {},
   // 記錄每一題是否已截止投票 { questionIndex: true/false }
   voteClosed: {},
   // 記錄每一題是否已經揭曉答案 { questionIndex: true/false }
-  revealed: {}
+  revealed: {},
+  // 回合數（重新挑戰時 +1，學生端藉此重置投票紀錄）
+  round: 0
 };
 
-// PeerJS 狀態與連線管理
-let peer = null;
-let activeConnections = [];
+// Firebase Realtime Database 設定（與自閉症課程投票網頁共用同一個專案，使用 slp115 命名空間）
+const firebaseConfig = {
+  apiKey: "AIzaSyAc-azy0N3M8kZ07nILXsNMd9Kpx9eSI58",
+  authDomain: "star-kids-quiz.firebaseapp.com",
+  databaseURL: "https://star-kids-quiz-default-rtdb.firebaseio.com",
+  projectId: "star-kids-quiz",
+  appId: "1:647348054589:web:064fa569735f38e9095854"
+};
+const FB_ROOT = "slp115";
+let db = null;
+let fbVotes = {}; // { questionIndex: { clientId: "A"|"B" } }
+let lastCounts = { A: 0, B: 0 };
 const TARGET_VOTES = 50; // 投票截止閥值
 let qrcodeInstance = null;
 
-// DOM 元素選取
-const progressDots = document.getElementById("progressDots");
-const progressBarFill = document.getElementById("progressBarFill");
-const questionNumber = document.getElementById("questionNumber");
-const questionText = document.getElementById("questionText");
-const optionA = document.getElementById("optionA");
-const optionB = document.getElementById("optionB");
-const textA = document.getElementById("textA");
-const textB = document.getElementById("textB");
-const barA = document.getElementById("barA");
-const barB = document.getElementById("barB");
-const countA = document.getElementById("countA");
-const countB = document.getElementById("countB");
-const percentA = document.getElementById("percentA");
-const percentB = document.getElementById("percentB");
-const voteCountText = document.getElementById("voteCountText");
-const voteProgressFill = document.getElementById("voteProgressFill");
-const voteClosedTag = document.getElementById("voteClosedTag");
-const explanationSection = document.getElementById("explanationSection");
-const explanationText = document.getElementById("explanationText");
-const memeBox = document.getElementById("memeBox");
-const prevBtn = document.getElementById("prevBtn");
-const revealBtn = document.getElementById("revealBtn");
-const nextBtn = document.getElementById("nextBtn");
-const optionsGrid = document.getElementById("optionsGrid");
+// DOM 元素選取（以 let 宣告，便於重新挑戰後重新綁定）
+let progressDots, progressBarFill, questionNumber, questionText, optionA, optionB,
+    textA, textB, barA, barB, countA, countB, percentA, percentB,
+    voteCountText, voteProgressFill, voteClosedTag, explanationSection,
+    explanationText, memeBox, prevBtn, revealBtn, nextBtn, optionsGrid,
+    connectionDot, connectionText, connectedCount, qrcodeUrlText;
 
-const connectionDot = document.getElementById("connectionDot");
-const connectionText = document.getElementById("connectionText");
-const connectedCount = document.getElementById("connectedCount");
-const roomCodeEl = document.getElementById("roomCode");
-const qrcodeUrlText = document.getElementById("qrcodeUrlText");
-
-// 檢測是否為本地模式 (IP 位址或 localhost 運作)
-const isLocalMode = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1' || 
-                     window.location.hostname.match(/^\d+\.\d+\.\d+\.\d+$/);
+function initDomElements() {
+  progressDots = document.getElementById("progressDots");
+  progressBarFill = document.getElementById("progressBarFill");
+  questionNumber = document.getElementById("questionNumber");
+  questionText = document.getElementById("questionText");
+  optionA = document.getElementById("optionA");
+  optionB = document.getElementById("optionB");
+  textA = document.getElementById("textA");
+  textB = document.getElementById("textB");
+  barA = document.getElementById("barA");
+  barB = document.getElementById("barB");
+  countA = document.getElementById("countA");
+  countB = document.getElementById("countB");
+  percentA = document.getElementById("percentA");
+  percentB = document.getElementById("percentB");
+  voteCountText = document.getElementById("voteCountText");
+  voteProgressFill = document.getElementById("voteProgressFill");
+  voteClosedTag = document.getElementById("voteClosedTag");
+  explanationSection = document.getElementById("explanationSection");
+  explanationText = document.getElementById("explanationText");
+  memeBox = document.getElementById("memeBox");
+  prevBtn = document.getElementById("prevBtn");
+  revealBtn = document.getElementById("revealBtn");
+  nextBtn = document.getElementById("nextBtn");
+  optionsGrid = document.getElementById("optionsGrid");
+  connectionDot = document.getElementById("connectionDot");
+  connectionText = document.getElementById("connectionText");
+  connectedCount = document.getElementById("connectedCount");
+  qrcodeUrlText = document.getElementById("qrcodeUrlText");
+}
 
 // 初始化應用程式
 function initApp() {
+  initDomElements();
   generateProgressDots();
-  initVotesData();
-  
-  if (isLocalMode) {
-    // 本地模式：不啟動 PeerJS，改用 API 輪詢
-    connectionDot.className = "status-dot green";
-    connectionText.textContent = "即時連線已就緒 (本地區域網模式)";
-    
-    // 隱藏在本地不需要的代碼面板元件
-    const codeBox = document.querySelector(".connection-code-box");
-    if (codeBox) codeBox.style.display = "none";
-    
-    // 計算本地學生連結 (同 IP 網址)
-    let baseURL = window.location.origin + window.location.pathname;
-    if (baseURL.endsWith("index.html")) {
-      baseURL = baseURL.replace("index.html", "");
-    }
-    if (!baseURL.endsWith("/")) {
-      baseURL += "/";
-    }
-    const studentUrl = `${baseURL}student.html`;
-    qrcodeUrlText.textContent = studentUrl;
-
-    // 繪製 QR Code
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), {
-      text: studentUrl,
-      width: 160,
-      height: 160,
-      colorDark: "#1A202C",
-      colorLight: "#FFFFFF",
-      correctLevel: QRCode.CorrectLevel.M
-    });
-
-    setupLocalServerPolling();
-  } else {
-    setupWebRTC();
-  }
-  
+  setupFirebase();
   renderQuestion();
 }
 
-// 初始化投票資料結構
-function initVotesData() {
-  quizData.forEach((_, idx) => {
-    state.votes[idx] = { A: [], B: [] };
-    state.voteClosed[idx] = false;
-    state.revealed[idx] = false;
+// 初始化 Firebase 連線（教師端為控制者）
+function setupFirebase() {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+
+  // 連線狀態顯示
+  db.ref('.info/connected').on('value', (snap) => {
+    if (!connectionDot) return;
+    if (snap.val()) {
+      connectionDot.className = 'status-dot green';
+      connectionText.textContent = '已連線 Firebase：全班票數即時同步';
+    } else {
+      connectionDot.className = 'status-dot red';
+      connectionText.textContent = '連線中斷，請檢查網路';
+    }
   });
+
+  // 同步課堂狀態（目前題目、截止、公佈）
+  db.ref(FB_ROOT + '/state').on('value', (snap) => {
+    const v = snap.val();
+    if (!v) {
+      // 首次使用：寫入初始狀態
+      db.ref(FB_ROOT + '/state').set({ currentQuestion: 0, round: 0, revealed: {}, voteClosed: {} });
+      return;
+    }
+    const prevQ = state.currentQuestion;
+    state.currentQuestion = v.currentQuestion || 0;
+    state.round = v.round || 0;
+    state.revealed = v.revealed || {};
+    state.voteClosed = v.voteClosed || {};
+    if (prevQ !== state.currentQuestion) {
+      lastCounts = tally(state.currentQuestion);
+    }
+    renderQuestion();
+  });
+
+  // 即時票數同步
+  db.ref(FB_ROOT + '/votes').on('value', (snap) => {
+    fbVotes = snap.val() || {};
+    const idx = state.currentQuestion;
+    const t = tally(idx);
+    if (t.A !== lastCounts.A) animateTicketIncrement(countA, t.A);
+    if (t.B !== lastCounts.B) animateTicketIncrement(countB, t.B);
+    lastCounts = { A: t.A, B: t.B };
+    updateVoteGraphics(idx);
+    renderQuestion();
+
+    // 自動截止：超過 50 票
+    if (t.A + t.B >= TARGET_VOTES && !state.voteClosed[idx] && !state.revealed[idx]) {
+      triggerVoteClose(idx);
+    }
+    updateConnectedCountUI();
+  });
+
+  buildStudentQR();
 }
 
-// 設定 WebRTC PeerJS 連線 (教師投影端作為 Host)
-function setupWebRTC() {
-  // 生成隨機4位大寫英數字 ID 作為房間代碼
-  const randomId = Math.floor(1000 + Math.random() * 9000).toString();
-  const hostId = `SLP-${randomId}`;
+// 統計某一題的票數
+function tally(questionIdx) {
+  const t = { A: 0, B: 0 };
+  const q = fbVotes[questionIdx];
+  if (q) {
+    Object.keys(q).forEach((cid) => {
+      if (q[cid] === 'A') t.A++;
+      else if (q[cid] === 'B') t.B++;
+    });
+  }
+  return t;
+}
 
-  // 建立 Peer 節點，明確設定 wss 443 埠與 STUN 伺服器
-  peer = new Peer(hostId, {
-    host: '0.peerjs.com',
-    port: 443,
-    secure: true,
-    pingInterval: 3000,
-    config: {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' }
-      ]
-    },
-    debug: 1
-  });
+// 產生學生端 QR Code（學生直接開啟 student.html，不需要連線代碼）
+function buildStudentQR() {
+  let baseURL = window.location.origin + window.location.pathname;
+  if (baseURL.endsWith('index.html')) {
+    baseURL = baseURL.replace('index.html', '');
+  }
+  if (!baseURL.endsWith('/')) {
+    baseURL += '/';
+  }
+  const studentUrl = `${baseURL}student.html`;
+  if (qrcodeUrlText) qrcodeUrlText.textContent = studentUrl;
 
-  peer.on("open", (id) => {
-    console.log("Teacher Host open, Peer ID:", id);
-    connectionDot.className = "status-dot green";
-    connectionText.textContent = "即時連線已就緒 (投影端)";
-    roomCodeEl.textContent = randomId;
-
-    // 動態計算學生端連結網址
-    // 預期在 Netlify 上運作，直接使用當前 origin 替換 index.html 變成 student.html
-    let baseURL = window.location.origin + window.location.pathname;
-    if (baseURL.endsWith("index.html")) {
-      baseURL = baseURL.replace("index.html", "");
-    }
-    if (!baseURL.endsWith("/")) {
-      baseURL += "/";
-    }
-    const studentUrl = `${baseURL}student.html?hostId=${id}`;
-    qrcodeUrlText.textContent = studentUrl;
-
-    // 清除舊的 QR Code
-    document.getElementById("qrcode").innerHTML = "";
-    // 動態產生 QR Code
-    qrcodeInstance = new QRCode(document.getElementById("qrcode"), {
+  const qrBox = document.getElementById('qrcode');
+  if (qrBox) qrBox.innerHTML = '';
+  if (typeof QRCode !== 'undefined' && qrBox) {
+    qrcodeInstance = new QRCode(qrBox, {
       text: studentUrl,
       width: 160,
       height: 160,
-      colorDark: "#1A202C",
-      colorLight: "#FFFFFF",
+      colorDark: '#1A202C',
+      colorLight: '#FFFFFF',
       correctLevel: QRCode.CorrectLevel.M
     });
-  });
-
-  peer.on("connection", (conn) => {
-    console.log("Student joined:", conn.peer);
-    
-    // 監聽此學生斷線
-    conn.on("close", () => {
-      activeConnections = activeConnections.filter(c => c.peer !== conn.peer);
-      updateConnectedCountUI();
-    });
-
-    // 監聽資料傳遞
-    conn.on("data", (data) => {
-      handleStudentMessage(conn, data);
-    });
-
-    // 將連線存入連線池
-    activeConnections.push(conn);
-    updateConnectedCountUI();
-
-    // 剛連線時，同步目前題目狀態與學生端
-    conn.on("open", () => {
-      const currentIdx = state.currentQuestion;
-      const q = quizData[currentIdx];
-      const studentChosen = getStudentVoteForQuestion(conn.peer, currentIdx);
-
-      conn.send({
-        type: "SYNC",
-        currentQuestion: currentIdx,
-        question: q,
-        voteClosed: state.voteClosed[currentIdx],
-        revealed: state.revealed[currentIdx],
-        chosen: studentChosen, // 告訴該生他這題投過什麼
-        correct: state.revealed[currentIdx] ? q.correct : null,
-        explanation: state.revealed[currentIdx] ? q.explanation : null,
-        meme: state.revealed[currentIdx] ? q.meme : null
-      });
-    });
-  });
-
-  peer.on("error", (err) => {
-    console.error("PeerJS Error:", err);
-    connectionDot.className = "status-dot red";
-    connectionText.textContent = "連線出錯，請重啟網頁！";
-  });
-}
-
-// 取得某學生在某題的投票
-function getStudentVoteForQuestion(peerId, questionIdx) {
-  const vote = state.votes[questionIdx];
-  if (!vote) return null;
-  if (vote.A.includes(peerId)) return "A";
-  if (vote.B.includes(peerId)) return "B";
-  return null;
-}
-
-// 更新連線人數 UI
-function updateConnectedCountUI() {
-  connectedCount.textContent = activeConnections.length;
-}
-
-// 廣播給所有已連線學生
-function broadcast(message) {
-  activeConnections.forEach((conn) => {
-    if (conn.open) {
-      conn.send(message);
-    }
-  });
-}
-
-// 處理學生端發送來的投票指令
-function handleStudentMessage(conn, data) {
-  if (data.type === "VOTE") {
-    const currentIdx = state.currentQuestion;
-    
-    // 如果此題投票已截止或已公佈答案，則拒絕投票
-    if (state.voteClosed[currentIdx] || state.revealed[currentIdx]) {
-      conn.send({ type: "VOTE_REJECTED", reason: "本題投票已截止！" });
-      return;
-    }
-
-    const votes = state.votes[currentIdx];
-    const peerId = conn.peer;
-
-    // 檢查此學生是否在該題已經投過票
-    if (votes.A.includes(peerId) || votes.B.includes(peerId)) {
-      conn.send({ type: "VOTE_REJECTED", reason: "您本題已經投過票囉！" });
-      return;
-    }
-
-    // 計票 (去重)
-    if (data.option === "A") {
-      votes.A.push(peerId);
-      animateTicketIncrement(countA, votes.A.length);
-    } else if (data.option === "B") {
-      votes.B.push(peerId);
-      animateTicketIncrement(countB, votes.B.length);
-    }
-
-    // 告知學生投票成功
-    conn.send({ type: "VOTE_CONFIRMED", option: data.option });
-
-    // 重新計算並渲染票數與百分比
-    updateVoteGraphics(currentIdx);
-
-    // 檢查是否超過截止閥值 (50 票)
-    const totalVotes = votes.A.length + votes.B.length;
-    if (totalVotes >= TARGET_VOTES) {
-      triggerVoteClose(currentIdx);
-    }
   }
+}
+
+// 更新已參與投票人數（同一裝置不重複計算）
+function updateConnectedCountUI() {
+  if (!connectedCount) return;
+  const ids = new Set();
+  Object.keys(fbVotes).forEach((qi) => {
+    Object.keys(fbVotes[qi] || {}).forEach((cid) => ids.add(cid));
+  });
+  connectedCount.textContent = ids.size;
 }
 
 // 票數滾動加減與 Bump 微互動效果
@@ -575,9 +512,10 @@ function animateTicketIncrement(element, targetValue) {
 
 // 更新長條圖與百分比
 function updateVoteGraphics(questionIdx) {
-  const votes = state.votes[questionIdx];
-  const countValA = votes.A.length;
-  const countValB = votes.B.length;
+  if (!countA || !countB) return;
+  const t = tally(questionIdx);
+  const countValA = t.A;
+  const countValB = t.B;
   const total = countValA + countValB;
 
   // 計算百分比
@@ -615,17 +553,18 @@ function updateVoteGraphics(questionIdx) {
 
 // 主動截止某一題的投票
 function triggerVoteClose(questionIdx) {
+  if (state.voteClosed[questionIdx]) return;
   state.voteClosed[questionIdx] = true;
-  
-  // 大螢幕展示截止特效
-  voteClosedTag.style.display = "block";
-  voteClosedTag.textContent = `🚫 本題投票已截止！累計投出 ${state.votes[questionIdx].A.length + state.votes[questionIdx].B.length} 票`;
 
-  // 向所有學生端廣播截止通知
-  broadcast({
-    type: "STOP_VOTE",
-    questionIdx: questionIdx
-  });
+  // 寫入 Firebase，同步截止所有學生端
+  if (db) db.ref(FB_ROOT + '/state/voteClosed/' + questionIdx).set(true);
+
+  // 大螢幕展示截止特效
+  if (voteClosedTag) {
+    const t = tally(questionIdx);
+    voteClosedTag.style.display = "block";
+    voteClosedTag.textContent = `🚫 本題投票已截止！累計投出 ${t.A + t.B} 票`;
+  }
 }
 
 // 動態產生進度點
@@ -644,39 +583,16 @@ function generateProgressDots() {
 // 躍遷到指定題目
 function jumpToQuestion(index) {
   state.currentQuestion = index;
+  lastCounts = tally(index);
   renderQuestion();
-  
-  if (isLocalMode) {
-    // 本地模式：發送 API 進行同步
-    fetch('/api/control', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'change_question', index: index })
-    }).catch(err => console.error("Control API error:", err));
-  } else {
-    // 向所有學生同步當前題目
-    const q = quizData[index];
-    activeConnections.forEach((conn) => {
-      if (conn.open) {
-        const studentChosen = getStudentVoteForQuestion(conn.peer, index);
-        conn.send({
-          type: "CHANGE_QUESTION",
-          currentQuestion: index,
-          question: q,
-          voteClosed: state.voteClosed[index],
-          revealed: state.revealed[index],
-          chosen: studentChosen,
-          correct: state.revealed[index] ? q.correct : null,
-          explanation: state.revealed[index] ? q.explanation : null,
-          meme: state.revealed[index] ? q.meme : null
-        });
-      }
-    });
-  }
+
+  // 寫入 Firebase，同步所有學生端
+  if (db) db.ref(FB_ROOT + '/state/currentQuestion').set(index);
 }
 
 // 渲染大螢幕當前題目與投票進度
 function renderQuestion() {
+  if (!questionNumber) return; // 總結畫面時不渲染
   const currentIdx = state.currentQuestion;
   const q = quizData[currentIdx];
 
@@ -688,7 +604,8 @@ function renderQuestion() {
     }
     // 狀態點背景變色
     dot.classList.remove("answered", "revealed-correct");
-    const total = state.votes[idx].A.length + state.votes[idx].B.length;
+    const tv = tally(idx);
+    const total = tv.A + tv.B;
     if (state.revealed[idx]) {
       dot.classList.add("revealed-correct");
     } else if (total > 0) {
@@ -722,8 +639,9 @@ function renderQuestion() {
 
   // 檢查是否已截止
   if (state.voteClosed[currentIdx]) {
+    const t = tally(currentIdx);
     voteClosedTag.style.display = "block";
-    voteClosedTag.textContent = `🚫 本題投票已截止！累計投出 ${state.votes[currentIdx].A.length + state.votes[currentIdx].B.length} 票`;
+    voteClosedTag.textContent = `🚫 本題投票已截止！累計投出 ${t.A + t.B} 票`;
   } else {
     voteClosedTag.style.display = "none";
   }
@@ -760,64 +678,29 @@ function teacherVote(option) {
   
   // 如果已經公佈答案或該題已經截止，則不再投票
   if (state.voteClosed[currentIdx] || state.revealed[currentIdx]) return;
+  if (!db) return;
 
-  const votes = state.votes[currentIdx];
-  
   // 老師手動投票時，為了快速展示得票長條圖與數字動畫，直接生成一組模擬得票
   // 例如：該選項得 38 票，另一個選項得 12 票，共 50 票並觸發截止。
   const mockA = option === 'A' ? 38 : 12;
   const mockB = option === 'B' ? 38 : 12;
-  
-  // 填充選票數據
-  for (let i = 0; i < mockA; i++) votes.A.push(`mock-teacher-A-${i}`);
-  for (let i = 0; i < mockB; i++) votes.B.push(`mock-teacher-B-${i}`);
-
-  // 計數器動畫
-  animateTicketIncrement(countA, votes.A.length);
-  animateTicketIncrement(countB, votes.B.length);
-
-  // 重新渲染百分比與圖形
-  updateVoteGraphics(currentIdx);
-
-  // 觸發投票截止
-  triggerVoteClose(currentIdx);
+  const updates = {};
+  const stamp = Date.now();
+  for (let i = 0; i < mockA; i++) updates[`${currentIdx}/mock-A-${stamp}-${i}`] = 'A';
+  for (let i = 0; i < mockB; i++) updates[`${currentIdx}/mock-B-${stamp}-${i}`] = 'B';
+  db.ref(FB_ROOT + '/votes').update(updates);
 }
 
 // 投影端點擊「公佈答案」
 function revealAnswer() {
   const currentIdx = state.currentQuestion;
-  const q = quizData[currentIdx];
+  if (!db) return;
 
-  // 標記為已揭曉
-  state.revealed[currentIdx] = true;
-  // 公佈答案時自動截止投票
-  state.voteClosed[currentIdx] = true;
-
-  // 更新導覽點外觀
-  const dot = document.getElementById(`dot-${currentIdx}`);
-  dot.classList.remove("answered");
-  dot.classList.add("revealed-correct");
-
-  if (isLocalMode) {
-    // 本地模式：發送 API 公佈解答
-    fetch('/api/control', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'reveal_answer' })
-    }).catch(err => console.error("Control API error:", err));
-  } else {
-    // 向所有學生廣播答案與解析
-    broadcast({
-      type: "REVEAL_ANSWER",
-      questionIdx: currentIdx,
-      correct: q.correct,
-      explanation: q.explanation,
-      meme: q.meme
-    });
-  }
-
-  // 重新渲染以套用 blink 動畫
-  renderQuestion();
+  // 寫入 Firebase：標記已揭曉並自動截止投票（學生端與大螢幕會自動同步渲染）
+  db.ref(FB_ROOT + '/state').update({
+    ['revealed/' + currentIdx]: true,
+    ['voteClosed/' + currentIdx]: true
+  });
 }
 
 // 上一題
@@ -843,7 +726,8 @@ function showSummary() {
   // 統計每一題得票最高的選項與全體分布
   let totalVotesCount = 0;
   quizData.forEach((_, i) => {
-    totalVotesCount += (state.votes[i].A.length + state.votes[i].B.length);
+    const t = tally(i);
+    totalVotesCount += (t.A + t.B);
   });
 
   // 動態替換 app-container 的內容為漂亮的大一新生成果總結頁面
@@ -881,10 +765,12 @@ function showSummary() {
 function restartQuiz() {
   state = {
     currentQuestion: 0,
-    votes: {},
     voteClosed: {},
-    revealed: {}
+    revealed: {},
+    round: (state.round || 0) + 1
   };
+  fbVotes = {};
+  lastCounts = { A: 0, B: 0 };
   
   // 恢復原有的 HTML 架構
   const container = document.querySelector(".app-container");
@@ -900,96 +786,169 @@ function restartQuiz() {
     </div>
 
     <div class="presentation-layout">
-      <div class="quiz-area">
-        <header>
-          <h1 class="main-title">你以為的語言治療師 VS. 真正的語言治療師</h1>
-          <p class="subtitle">115學年度新生定向職涯探索互動挑戰 (教師投影端)</p>
-        </header>
+      <!-- Left: Campus Quest Map -->
+      <div class="map-area" id="mapArea">
+        <h2 class="map-section-title">🗺️ 亞大聽語新生闖關地圖</h2>
+        
+        <div class="campus-map" id="campusMap">
+          <!-- 亞大經典地標背景概念圖（用 SVG path 畫出相連的路徑） -->
+          <svg class="map-paths" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <!-- 背景灰色路徑 -->
+            <path id="bgPath" d="M 120 800 L 250 650 L 450 750 L 380 450 L 550 550 L 700 650 L 880 400 L 750 220 L 500 150 L 200 200" fill="none" stroke="#E2E8F0" stroke-width="6" stroke-dasharray="10,10" />
+            <!-- 已解鎖的彩色發光路徑 -->
+            <path id="activePath" fill="none" stroke="var(--accent-yellow)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" class="active-trail" />
+          </svg>
 
-        <div class="progress-container">
-          <div class="progress-dots" id="progressDots"></div>
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progressBarFill"></div>
+          <!-- 10 個經典地標點 -->
+          <div class="landmark-node" id="landmark-0" style="left: 12%; top: 80%;">
+            <div class="landmark-icon">🏢</div>
+            <div class="landmark-name">管理大樓 (Q1)</div>
+          </div>
+          <div class="landmark-node" id="landmark-1" style="left: 25%; top: 65%;">
+            <div class="landmark-icon">通</div>
+            <div class="landmark-name">通識大樓 (Q2)</div>
+          </div>
+          <div class="landmark-node" id="landmark-2" style="left: 45%; top: 75%;">
+            <div class="landmark-icon">🏛️</div>
+            <div class="landmark-name">美術館 (Q3)</div>
+          </div>
+          <div class="landmark-node" id="landmark-3" style="left: 38%; top: 45%;">
+            <div class="landmark-icon">🔬</div>
+            <div class="landmark-name">聽語系館 (Q4)</div>
+          </div>
+          <div class="landmark-node" id="landmark-4" style="left: 55%; top: 55%;">
+            <div class="landmark-icon">🌳</div>
+            <div class="landmark-name">阿勃勒大道 (Q5)</div>
+          </div>
+          <div class="landmark-node" id="landmark-5" style="left: 70%; top: 65%;">
+            <div class="landmark-icon">🌊</div>
+            <div class="landmark-name">太極湖畔 (Q6)</div>
+          </div>
+          <div class="landmark-node" id="landmark-6" style="left: 88%; top: 40%;">
+            <div class="landmark-icon">🏥</div>
+            <div class="landmark-name">亞大醫院 (Q7)</div>
+          </div>
+          <div class="landmark-node" id="landmark-7" style="left: 75%; top: 22%;">
+            <div class="landmark-icon">🛌</div>
+            <div class="landmark-name">實習病房 (Q8)</div>
+          </div>
+          <div class="landmark-node" id="landmark-8" style="left: 50%; top: 15%;">
+            <div class="landmark-icon">🏃</div>
+            <div class="landmark-name">體育場 (Q9)</div>
+          </div>
+          <div class="landmark-node" id="landmark-9" style="left: 20%; top: 20%;">
+            <div class="landmark-icon">🏆</div>
+            <div class="landmark-name">體育館 (Q10)</div>
+          </div>
+
+          <!-- 主角大一新生 (Avatar) 與對話泡泡 -->
+          <div class="avatar-container" id="avatar" style="left: 12%; top: 80%;">
+            <div class="dialog-bubble" id="dialogBubble">第一天入學！聽說聽語系要學解剖？😱</div>
+            <div class="avatar-character">👶</div>
+            <div class="avatar-pulse"></div>
           </div>
         </div>
-
-        <main class="question-section">
-          <div class="question-header">
-            <div class="question-number" id="questionNumber">Q1</div>
-            <h2 class="question-text" id="questionText">載入中...</h2>
-          </div>
-
-          <div class="vote-progress-wrapper">
-            <div class="vote-progress-info">
-              <span>📊 答題進度 (超過 50 票截止，總共 80 人)</span>
-              <span id="voteCountText" class="vote-count-text">目前票數：0 / 50 票</span>
-            </div>
-            <div class="vote-progress-track">
-              <div class="vote-progress-fill" id="voteProgressFill"></div>
-              <div class="vote-progress-deadline-marker">50票</div>
-            </div>
-            <div class="vote-closed-tag" id="voteClosedTag">🚫 本題投票已截止</div>
-          </div>
-
-          <div class="options-grid" id="optionsGrid">
-            <div class="option-card" id="optionA" onclick="teacherVote('A')">
-              <div class="option-badge">A</div>
-              <div class="option-illust" id="illustA"></div>
-              <div class="option-text" id="textA">選項 A 載入中...</div>
-              
-              <div class="vote-result-container">
-                <div class="vote-bar-wrapper">
-                  <div class="vote-bar-fill" id="barA"></div>
-                </div>
-                <div class="vote-numeric-display">
-                  <span class="vote-count" id="countA">0</span> 票
-                  <span class="vote-percentage" id="percentA">(0%)</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="option-card" id="optionB" onclick="teacherVote('B')">
-              <div class="option-badge">B</div>
-              <div class="option-illust" id="illustB"></div>
-              <div class="option-text" id="textB">選項 B 載入中...</div>
-
-              <div class="vote-result-container">
-                <div class="vote-bar-wrapper">
-                  <div class="vote-bar-fill" id="barB"></div>
-                </div>
-                <div class="vote-numeric-display">
-                  <span class="vote-count" id="countB">0</span> 票
-                  <span class="vote-percentage" id="percentB">(0%)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="explanation-section" id="explanationSection">
-            <div class="explanation-title">
-              <span>💡</span>
-              <span>解析與思維點</span>
-            </div>
-            <p class="explanation-text" id="explanationText">這裡會顯示答案解析與迷因點...</p>
-            <div class="meme-box" id="memeBox"></div>
-          </div>
-        </main>
       </div>
 
-      <div class="qrcode-panel">
-        <div class="qrcode-card">
-          <h3 class="qrcode-title">📲 學生加入投票</h3>
-          <p class="qrcode-desc">請學生用手機掃描下方 QR Code，即可同步參與每一題的即時投票！</p>
-          
-          <div class="qrcode-container-wrapper">
-            <div id="qrcode" class="qrcode-box"></div>
+      <!-- Right: Challenge and QR Code Panel -->
+      <div class="challenge-area">
+        <!-- Quiz Content -->
+        <div class="quiz-area">
+          <header>
+            <h1 class="main-title">你以為的語言治療師 VS. 真正的語言治療師</h1>
+            <p class="subtitle">115學年度新生定向職涯探索互動挑戰 (教師投影端)</p>
+          </header>
+
+          <!-- Navigation & Progress Bar -->
+          <div class="progress-container">
+            <div class="progress-dots" id="progressDots"></div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
           </div>
-          
-          <div class="connection-code-box">
-            <span class="code-label">連線代碼</span>
-            <div class="code-value" id="roomCode">----</div>
+
+          <!-- Active Question Section -->
+          <main class="question-section">
+            <div class="question-header">
+              <div class="question-number" id="questionNumber">Q1</div>
+              <h2 class="question-text" id="questionText">載入中...</h2>
+            </div>
+
+            <!-- Real-time Vote Progress -->
+            <div class="vote-progress-wrapper">
+              <div class="vote-progress-info">
+                <span>📊 答題進度 (超過 50 票截止，總共 80 人)</span>
+                <span id="voteCountText" class="vote-count-text">目前票數：0 / 50 票</span>
+              </div>
+              <div class="vote-progress-track">
+                <div class="vote-progress-fill" id="voteProgressFill"></div>
+                <div class="vote-progress-deadline-marker">50票</div>
+              </div>
+              <div class="vote-closed-tag" id="voteClosedTag">🚫 本題投票已截止</div>
+            </div>
+
+            <!-- Two Option Cards -->
+            <div class="options-grid" id="optionsGrid">
+              <!-- Option Card A -->
+              <div class="option-card" id="optionA" onclick="teacherVote('A')">
+                <div class="option-badge">A</div>
+                <div class="option-illust" id="illustA"></div>
+                <div class="option-text" id="textA">選項 A 載入中...</div>
+                
+                <!-- Vote Result -->
+                <div class="vote-result-container">
+                  <div class="vote-bar-wrapper">
+                    <div class="vote-bar-fill" id="barA"></div>
+                  </div>
+                  <div class="vote-numeric-display">
+                    <span class="vote-count" id="countA">0</span> 票
+                    <span class="vote-percentage" id="percentA">(0%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option Card B -->
+              <div class="option-card" id="optionB" onclick="teacherVote('B')">
+                <div class="option-badge">B</div>
+                <div class="option-illust" id="illustB"></div>
+                <div class="option-text" id="textB">選項 B 載入中...</div>
+
+                <!-- Vote Result -->
+                <div class="vote-result-container">
+                  <div class="vote-bar-wrapper">
+                    <div class="vote-bar-fill" id="barB"></div>
+                  </div>
+                  <div class="vote-numeric-display">
+                    <span class="vote-count" id="countB">0</span> 票
+                    <span class="vote-percentage" id="percentB">(0%)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explanation / Meme Section (Accordion style) -->
+            <div class="explanation-section" id="explanationSection">
+              <div class="explanation-title">
+                <span>💡</span>
+                <span>解析與思維點</span>
+              </div>
+              <p class="explanation-text" id="explanationText">這裡會顯示答案解析與迷因點...</p>
+              <div class="meme-box" id="memeBox"></div>
+            </div>
+          </main>
+        </div>
+
+        <!-- QR Code Panel for Student Joining -->
+        <div class="qrcode-panel">
+          <div class="qrcode-card">
+            <h3 class="qrcode-title">📲 學生加入投票</h3>
+            <p class="qrcode-desc">請學生用手機掃描下方 QR Code，即可同步參與每一題的即時投票！</p>
+            
+            <div class="qrcode-container-wrapper">
+              <div id="qrcode" class="qrcode-box"></div>
+            </div>
+            <p class="qrcode-url-text" id="qrcodeUrlText">正在取得上線網址...</p>
           </div>
-          <p class="qrcode-url-text" id="qrcodeUrlText">正在取得上線網址...</p>
         </div>
       </div>
     </div>
@@ -1009,106 +968,19 @@ function restartQuiz() {
     </div>
   `;
 
-  // 重新綁定與初始化 DOM 元素
+  // 重新綁定 DOM 元素、重建進度點並渲染
   initDomElements();
-  // 重新初始化投票數據
-  initVotesData();
-  if (isLocalMode) {
-    fetch('/api/control', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'restart' })
-    }).catch(err => console.error("Control API error:", err));
-    renderQuestion();
-  } else {
-    // 重建 WebRTC Peer
-    if (peer) {
-      peer.destroy();
-    }
-    setupWebRTC();
-    // 渲染
-    renderQuestion();
+  generateProgressDots();
+  renderQuestion();
+
+  // 重設 Firebase 上的狀態與票數（回合數 +1，學生端可重新投票）
+  if (db) {
+    db.ref(FB_ROOT + '/state').set({ currentQuestion: 0, round: state.round, revealed: {}, voteClosed: {} });
+    db.ref(FB_ROOT + '/votes').remove();
   }
+  buildStudentQR();
 }
 
-// 重新抓取 DOM 元素的輔助函數
-function initDomElements() {
-  globalThis.progressDots = document.getElementById("progressDots");
-  globalThis.progressBarFill = document.getElementById("progressBarFill");
-  globalThis.questionNumber = document.getElementById("questionNumber");
-  globalThis.questionText = document.getElementById("questionText");
-  globalThis.optionA = document.getElementById("optionA");
-  globalThis.optionB = document.getElementById("optionB");
-  globalThis.textA = document.getElementById("textA");
-  globalThis.textB = document.getElementById("textB");
-  globalThis.barA = document.getElementById("barA");
-  globalThis.barB = document.getElementById("barB");
-  globalThis.countA = document.getElementById("countA");
-  globalThis.countB = document.getElementById("countB");
-  globalThis.percentA = document.getElementById("percentA");
-  globalThis.percentB = document.getElementById("percentB");
-  globalThis.voteCountText = document.getElementById("voteCountText");
-  globalThis.voteProgressFill = document.getElementById("voteProgressFill");
-  globalThis.voteClosedTag = document.getElementById("voteClosedTag");
-  globalThis.explanationSection = document.getElementById("explanationSection");
-  globalThis.explanationText = document.getElementById("explanationText");
-  globalThis.memeBox = document.getElementById("memeBox");
-  globalThis.prevBtn = document.getElementById("prevBtn");
-  globalThis.revealBtn = document.getElementById("revealBtn");
-  globalThis.nextBtn = document.getElementById("nextBtn");
-  globalThis.optionsGrid = document.getElementById("optionsGrid");
-
-  globalThis.connectionDot = document.getElementById("connectionDot");
-  globalThis.connectionText = document.getElementById("connectionText");
-  globalThis.connectedCount = document.getElementById("connectedCount");
-  globalThis.roomCodeEl = document.getElementById("roomCode");
-  globalThis.qrcodeUrlText = document.getElementById("qrcodeUrlText");
-}
-
-// 本地模式 API 輪詢實作
-let localPollingTimer = null;
-function setupLocalServerPolling() {
-  if (localPollingTimer) clearInterval(localPollingTimer);
-  pollLocalState();
-  localPollingTimer = setInterval(pollLocalState, 800);
-}
-
-function pollLocalState() {
-  fetch('/api/state')
-    .then(res => res.json())
-    .then(data => {
-      const currentIdx = state.currentQuestion;
-      const serverVotes = data.votes[currentIdx] || { A: 0, B: 0 };
-      const localVotes = state.votes[currentIdx];
-      
-      const localCountA = localVotes.A.length;
-      const localCountB = localVotes.B.length;
-
-      // 如果伺服器票數有更新，觸發跑馬燈動畫與 Bump 特效
-      if (serverVotes.A > localCountA) {
-        for (let i = localCountA; i < serverVotes.A; i++) {
-          localVotes.A.push(`local-student-A-${i}`);
-        }
-        animateTicketIncrement(countA, serverVotes.A);
-      }
-      if (serverVotes.B > localCountB) {
-        for (let i = localCountB; i < serverVotes.B; i++) {
-          localVotes.B.push(`local-student-B-${i}`);
-        }
-        animateTicketIncrement(countB, serverVotes.B);
-      }
-
-      // 同步截止狀態
-      if (data.voteClosed && !state.voteClosed[currentIdx]) {
-        state.voteClosed[currentIdx] = true;
-        voteClosedTag.style.display = "block";
-        voteClosedTag.textContent = `🚫 本題投票已截止！累計投出 ${serverVotes.A + serverVotes.B} 票`;
-      }
-
-      updateVoteGraphics(currentIdx);
-    })
-    .catch(err => console.error("Poll local state error:", err));
-}
 
 // 頁面加載完成後啟動
 window.addEventListener("DOMContentLoaded", initApp);

@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>你以為的語言治療師 VS. 真正的語言治療師 - 職涯探索挑戰</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Include PeerJS and QRCode.js from CDNs -->
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <!-- Include Firebase and QRCode.js from CDNs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -24,113 +25,176 @@
         <span id="connectionText">正在初始化即時連線...</span>
       </div>
       <div class="student-count">
-        👥 已連線學生：<span id="connectedCount" class="badge">0</span> 人
+        👥 已參與投票：<span id="connectedCount" class="badge">0</span> 人
       </div>
     </div>
 
     <!-- Main Flex Layout for Presentation Screen -->
     <div class="presentation-layout">
-      <!-- Left: Quiz Content -->
-      <div class="quiz-area">
-        <header>
-          <h1 class="main-title">你以為的語言治療師 VS. 真正的語言治療師</h1>
-          <p class="subtitle">115學年度新生定向職涯探索互動挑戰 (教師投影端)</p>
-        </header>
+      <!-- Left: Campus Quest Map -->
+      <div class="map-area" id="mapArea">
+        <h2 class="map-section-title">🗺️ 亞大聽語新生闖關地圖</h2>
+        
+        <div class="campus-map" id="campusMap">
+          <!-- 亞大經典地標背景概念圖（用 SVG path 畫出相連的路徑） -->
+          <svg class="map-paths" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <!-- 背景灰色路徑 -->
+            <path id="bgPath" d="M 120 800 L 250 650 L 450 750 L 380 450 L 550 550 L 700 650 L 880 400 L 750 220 L 500 150 L 200 200" fill="none" stroke="#E2E8F0" stroke-width="6" stroke-dasharray="10,10" />
+            <!-- 已解鎖的彩色發光路徑 -->
+            <path id="activePath" fill="none" stroke="var(--accent-yellow)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" class="active-trail" />
+          </svg>
 
-        <!-- Navigation & Progress Bar -->
-        <div class="progress-container">
-          <div class="progress-dots" id="progressDots"></div>
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progressBarFill"></div>
+          <!-- 10 個經典地標點 -->
+          <div class="landmark-node" id="landmark-0" style="left: 12%; top: 80%;">
+            <div class="landmark-icon">🏢</div>
+            <div class="landmark-name">管理大樓 (Q1)</div>
+          </div>
+          <div class="landmark-node" id="landmark-1" style="left: 25%; top: 65%;">
+            <div class="landmark-icon">通</div>
+            <div class="landmark-name">通識大樓 (Q2)</div>
+          </div>
+          <div class="landmark-node" id="landmark-2" style="left: 45%; top: 75%;">
+            <div class="landmark-icon">🏛️</div>
+            <div class="landmark-name">美術館 (Q3)</div>
+          </div>
+          <div class="landmark-node" id="landmark-3" style="left: 38%; top: 45%;">
+            <div class="landmark-icon">🔬</div>
+            <div class="landmark-name">聽語系館 (Q4)</div>
+          </div>
+          <div class="landmark-node" id="landmark-4" style="left: 55%; top: 55%;">
+            <div class="landmark-icon">🌳</div>
+            <div class="landmark-name">阿勃勒大道 (Q5)</div>
+          </div>
+          <div class="landmark-node" id="landmark-5" style="left: 70%; top: 65%;">
+            <div class="landmark-icon">🌊</div>
+            <div class="landmark-name">太極湖畔 (Q6)</div>
+          </div>
+          <div class="landmark-node" id="landmark-6" style="left: 88%; top: 40%;">
+            <div class="landmark-icon">🏥</div>
+            <div class="landmark-name">亞大醫院 (Q7)</div>
+          </div>
+          <div class="landmark-node" id="landmark-7" style="left: 75%; top: 22%;">
+            <div class="landmark-icon">🛌</div>
+            <div class="landmark-name">實習病房 (Q8)</div>
+          </div>
+          <div class="landmark-node" id="landmark-8" style="left: 50%; top: 15%;">
+            <div class="landmark-icon">🏃</div>
+            <div class="landmark-name">體育場 (Q9)</div>
+          </div>
+          <div class="landmark-node" id="landmark-9" style="left: 20%; top: 20%;">
+            <div class="landmark-icon">🏆</div>
+            <div class="landmark-name">體育館 (Q10)</div>
+          </div>
+
+          <!-- 主角大一新生 (Avatar) 與對話泡泡 -->
+          <div class="avatar-container" id="avatar" style="left: 12%; top: 80%;">
+            <div class="dialog-bubble" id="dialogBubble">第一天入學！聽說聽語系要學解剖？😱</div>
+            <div class="avatar-character">👶</div>
+            <div class="avatar-pulse"></div>
           </div>
         </div>
-
-        <!-- Active Question Section -->
-        <main class="question-section">
-          <div class="question-header">
-            <div class="question-number" id="questionNumber">Q1</div>
-            <h2 class="question-text" id="questionText">載入中...</h2>
-          </div>
-
-          <!-- Real-time Vote Progress (Total 50 target) -->
-          <div class="vote-progress-wrapper">
-            <div class="vote-progress-info">
-              <span>📊 答題進度 (超過 50 票截止，總共 80 人)</span>
-              <span id="voteCountText" class="vote-count-text">目前票數：0 / 50 票</span>
-            </div>
-            <div class="vote-progress-track">
-              <div class="vote-progress-fill" id="voteProgressFill"></div>
-              <div class="vote-progress-deadline-marker">50票</div>
-            </div>
-            <div class="vote-closed-tag" id="voteClosedTag">🚫 本題投票已截止</div>
-          </div>
-
-          <!-- Two Option Cards -->
-          <div class="options-grid" id="optionsGrid">
-            <!-- Option Card A -->
-            <div class="option-card" id="optionA" onclick="teacherVote('A')">
-              <div class="option-badge">A</div>
-              <div class="option-illust" id="illustA"></div>
-              <div class="option-text" id="textA">選項 A 載入中...</div>
-              
-              <!-- Vote Result -->
-              <div class="vote-result-container">
-                <div class="vote-bar-wrapper">
-                  <div class="vote-bar-fill" id="barA"></div>
-                </div>
-                <div class="vote-numeric-display">
-                  <span class="vote-count" id="countA">0</span> 票
-                  <span class="vote-percentage" id="percentA">(0%)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Option Card B -->
-            <div class="option-card" id="optionB" onclick="teacherVote('B')">
-              <div class="option-badge">B</div>
-              <div class="option-illust" id="illustB"></div>
-              <div class="option-text" id="textB">選項 B 載入中...</div>
-
-              <!-- Vote Result -->
-              <div class="vote-result-container">
-                <div class="vote-bar-wrapper">
-                  <div class="vote-bar-fill" id="barB"></div>
-                </div>
-                <div class="vote-numeric-display">
-                  <span class="vote-count" id="countB">0</span> 票
-                  <span class="vote-percentage" id="percentB">(0%)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Explanation / Meme Section (Accordion style) -->
-          <div class="explanation-section" id="explanationSection">
-            <div class="explanation-title">
-              <span>💡</span>
-              <span>解析與思維點</span>
-            </div>
-            <p class="explanation-text" id="explanationText">這裡會顯示答案解析與迷因點...</p>
-            <div class="meme-box" id="memeBox"></div>
-          </div>
-        </main>
       </div>
 
-      <!-- Right: QR Code Panel for Student Joining -->
-      <div class="qrcode-panel">
-        <div class="qrcode-card">
-          <h3 class="qrcode-title">📲 學生加入投票</h3>
-          <p class="qrcode-desc">請學生用手機掃描下方 QR Code，即可同步參與每一題的即時投票！</p>
-          
-          <div class="qrcode-container-wrapper">
-            <div id="qrcode" class="qrcode-box"></div>
+      <!-- Right: Challenge and QR Code Panel -->
+      <div class="challenge-area">
+        <!-- Quiz Content -->
+        <div class="quiz-area">
+          <header>
+            <h1 class="main-title">你以為的語言治療師 VS. 真正的語言治療師</h1>
+            <p class="subtitle">115學年度新生定向職涯探索互動挑戰 (教師投影端)</p>
+          </header>
+
+          <!-- Navigation & Progress Bar -->
+          <div class="progress-container">
+            <div class="progress-dots" id="progressDots"></div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
           </div>
-          
-          <div class="connection-code-box">
-            <span class="code-label">連線代碼</span>
-            <div class="code-value" id="roomCode">----</div>
+
+          <!-- Active Question Section -->
+          <main class="question-section">
+            <div class="question-header">
+              <div class="question-number" id="questionNumber">Q1</div>
+              <h2 class="question-text" id="questionText">載入中...</h2>
+            </div>
+
+            <!-- Real-time Vote Progress -->
+            <div class="vote-progress-wrapper">
+              <div class="vote-progress-info">
+                <span>📊 答題進度 (超過 50 票截止，總共 80 人)</span>
+                <span id="voteCountText" class="vote-count-text">目前票數：0 / 50 票</span>
+              </div>
+              <div class="vote-progress-track">
+                <div class="vote-progress-fill" id="voteProgressFill"></div>
+                <div class="vote-progress-deadline-marker">50票</div>
+              </div>
+              <div class="vote-closed-tag" id="voteClosedTag">🚫 本題投票已截止</div>
+            </div>
+
+            <!-- Two Option Cards -->
+            <div class="options-grid" id="optionsGrid">
+              <!-- Option Card A -->
+              <div class="option-card" id="optionA" onclick="teacherVote('A')">
+                <div class="option-badge">A</div>
+                <div class="option-illust" id="illustA"></div>
+                <div class="option-text" id="textA">選項 A 載入中...</div>
+                
+                <!-- Vote Result -->
+                <div class="vote-result-container">
+                  <div class="vote-bar-wrapper">
+                    <div class="vote-bar-fill" id="barA"></div>
+                  </div>
+                  <div class="vote-numeric-display">
+                    <span class="vote-count" id="countA">0</span> 票
+                    <span class="vote-percentage" id="percentA">(0%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option Card B -->
+              <div class="option-card" id="optionB" onclick="teacherVote('B')">
+                <div class="option-badge">B</div>
+                <div class="option-illust" id="illustB"></div>
+                <div class="option-text" id="textB">選項 B 載入中...</div>
+
+                <!-- Vote Result -->
+                <div class="vote-result-container">
+                  <div class="vote-bar-wrapper">
+                    <div class="vote-bar-fill" id="barB"></div>
+                  </div>
+                  <div class="vote-numeric-display">
+                    <span class="vote-count" id="countB">0</span> 票
+                    <span class="vote-percentage" id="percentB">(0%)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explanation / Meme Section (Accordion style) -->
+            <div class="explanation-section" id="explanationSection">
+              <div class="explanation-title">
+                <span>💡</span>
+                <span>解析與思維點</span>
+              </div>
+              <p class="explanation-text" id="explanationText">這裡會顯示答案解析與迷因點...</p>
+              <div class="meme-box" id="memeBox"></div>
+            </div>
+          </main>
+        </div>
+
+        <!-- QR Code Panel for Student Joining -->
+        <div class="qrcode-panel">
+          <div class="qrcode-card">
+            <h3 class="qrcode-title">📲 學生加入投票</h3>
+            <p class="qrcode-desc">請學生用手機掃描下方 QR Code，即可同步參與每一題的即時投票！</p>
+            
+            <div class="qrcode-container-wrapper">
+              <div id="qrcode" class="qrcode-box"></div>
+            </div>
+
+            <p class="qrcode-url-text" id="qrcodeUrlText">正在取得上線網址...</p>
           </div>
-          <p class="qrcode-url-text" id="qrcodeUrlText">正在取得上線網址...</p>
         </div>
       </div>
     </div>

@@ -1,18 +1,126 @@
-// 學生端 WebRTC 連線與投票邏輯
-const isLocalMode = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1' || 
-                     window.location.hostname.match(/^\d+\.\d+\.\d+\.\d+$/);
+// 學生端 Firebase 即時投票邏輯（取代原先的 PeerJS WebRTC 連線）
+const firebaseConfig = {
+  apiKey: "AIzaSyAc-azy0N3M8kZ07nILXsNMd9Kpx9eSI58",
+  authDomain: "star-kids-quiz.firebaseapp.com",
+  databaseURL: "https://star-kids-quiz-default-rtdb.firebaseio.com",
+  projectId: "star-kids-quiz",
+  appId: "1:647348054589:web:064fa569735f38e9095854"
+};
+const FB_ROOT = "slp115";
 
-let peer = null;
-let conn = null;
-let currentQuestionIndex = null;
-let currentQuestionData = null;
-let myVotes = {}; // 紀錄學生自己在本地投過的選項：{ questionIndex: 'A' or 'B' }
+let db = null;
+let state = { currentQuestion: 0, revealed: {}, voteClosed: {}, round: 0 };
+let fbVotes = {};
+
+// 每位學生的裝置 ID 與投票紀錄（key 含回合數，老師重新挑戰後可再投票）
+const CID = (() => {
+  let id = localStorage.getItem('slp_cid');
+  if (!id) {
+    id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem('slp_cid', id);
+  }
+  return id;
+})();
+let myVotes = {};
+try { myVotes = JSON.parse(localStorage.getItem('slp_myvotes') || '{}'); } catch (e) { myVotes = {}; }
+const vkey = () => state.round + '#' + state.currentQuestion;
+
+// 題目資料（與教師端投影同步的 10 題）
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "語言治療師平常到底在做什麼？",
+    optionA: "透過評估、治療與訓練，協助個案改善溝通、語言、說話、聲音與吞嚥等能力。",
+    optionB: "陪個案聊天、練習說話，偶爾唱唱歌、玩玩遊戲，讓他們「多講一點」藉此機會持續進步。",
+    correct: "A",
+    explanation: "語言治療是一門嚴謹的醫療專業。治療師的日常絕非只是單純的陪聊，而是需要精確的臨床評估、制定系統性的計畫，來幫助個案重建溝通與吞嚥功能！",
+    meme: "🤦 學生想像的語言治療師：\n🧸 陪你聊天 + 🗣️ 教你講話 + 🎤 帶你唱歌\n\n💪 真正的語言治療師：\n🔬 專業臨床推理 + 📈 制定科學治療目標 + 👅 吞嚥與發聲功能訓練"
+  },
+  {
+    id: 2,
+    question: "語言治療師主要服務哪些族群？",
+    optionA: "從嬰幼兒、兒童到成人及高齡者都有可能，服務內容會依年齡、疾病、發展狀況與功能需求而有所不同。",
+    optionB: "以兒童與發展階段的語言溝通問題為主要服務對象，成人個案則多集中在神經疾病或重大疾病後的語言與吞嚥問題。",
+    correct: "A",
+    explanation: "語言治療的服務對象是「全年齡層 (0-100歲)」。從新生兒的餵食困難、兒童的發展遲緩，到成人的中風失語症，再到老年人的吞嚥與退化問題，都是語言治療師的守備範圍！",
+    meme: "👶 嬰幼兒 (餵食與早療) ➔ 👧 兒童 (構音與語言發展) ➔ 👨 成人 (嗓音與口吃) ➔ 👵 長者 (吞嚥與認知溝通)\n💡 沒錯！我們守護的是人的一生中「溝通與享受美食」的權利！"
+  },
+  {
+    id: 3,
+    question: "語言治療師處理的問題，主要是「語言」嗎？",
+    optionA: "是。語言是語言治療的核心，因此主要處理理解、表達、詞彙、句子與溝通能力，其他問題則依個案狀況延伸處理。",
+    optionB: "不完全是。除了語言之外，還可能涉及構音／說話、嗓音、流暢、社交溝通以及吞嚥等功能。",
+    correct: "B",
+    explanation: "「語言」與「說話」在專業上是不同的概念！語言治療師除了處理語言（大腦理解與表達）之外，也處理說話（構音、口吃、嗓音）以及「吞嚥」（安全進食）等多元生理與社交溝通功能。",
+    meme: "💬 語言 (Language)：腦袋裡的詞彙與語法理解\n🗣️ 說話 (Speech)：肌肉發出的聲音與流暢度\n🍽️ 吞嚥 (Swallowing)：食物從口中送入胃的生理过程\n🔥 兩者皆是語言治療師的核心專業！"
+  },
+  {
+    id: 4,
+    question: "語言治療師與心理師、職能治療師等專業最大的差異是什麼？",
+    optionA: "語言治療師主要處理語言與溝通相關功能，其他專業則依各自的訓練領域提供心理、認知、動作或生活功能上的協助。",
+    optionB: "語言治療師雖然有自己的專業範圍，但實際臨床上常與心理師、職能治療師、物理治療師及醫師合作，共同處理個案的整體需求。",
+    correct: "A",
+    explanation: "這題是個「陷阱題」，兩者在臨床上都對。但題目問的是「最大的差異（核心專業）」，因此 A 才是正解。語言治療師的核心在於「語言與溝通/吞嚥」，而 B 描述的是「跨專業協作」，並非兩者本質的差異。",
+    meme: "🧠 心理師：專注於心智、情緒與認知調整\n🖐️ 職能治療師 (OT)：專注於生活適應、手部精細動作與感覺統合\n🗣️ 語言治療師 (SLP)：專注於語言、口語溝通、發聲與吞嚥"
+  },
+  {
+    id: 5,
+    question: "語言治療師畢業後，通常會在哪些地方工作？",
+    optionA: "主要以醫院及醫療院所為核心，之後再依個人專長延伸至學校、早療、長照等不同服務體系。",
+    optionB: "工作場域相當多元，除了醫院與診所，也可能進入學校、早療、長照及其他相關機構，並依場域接觸不同年齡與類型的個案。",
+    correct: "B",
+    explanation: "大一新生常以為畢業後只能待在醫院。實際上，語言治療師的工作場域極度多元，包含特教學校、早期療育機構、行動長照團隊、行動不便個案的居家服務，甚至是自行開設治療所！",
+    meme: "🏥 醫院/診所 (醫療系統) \n🏫 幼兒園/特教學校 (教育系統)\n🏡 長照機構/居家服務 (社福系統)\n👐 語言治療所 (私人執業)\n💡 畢業後，你不一定只有穿白袍這一條路！"
+  },
+  {
+    id: 6,
+    question: "如果兒童在治療過程中不太願意配合，語言治療師通常會怎麼做？",
+    optionA: "先建立關係與動機，再將治療目標融入遊戲、活動或兒童感興趣的情境中，讓孩子在參與活動的過程中完成治療。",
+    optionB: "先透過遊戲或互動活動建立參與意願，再逐步轉換到較具結構性的語言訓練，讓孩子同時兼顧治療目標與學習規律。",
+    correct: "A",
+    explanation: "對兒童來說，「遊戲本身就是治療的媒介」。語言治療並非「先玩一下，再上課」，而是將治療目標完美包裝在遊戲中。當孩子玩得開心時，他其實已經在進行高強度的語言訓練了！",
+    meme: "❌ 錯誤觀念：先陪你玩 10 分鐘，接著拿出課本嚴肅上課 30 分鐘。\n✅ 專業玩法：將「發音練習」融入「戳戳樂遊戲」，讓孩子在邊玩邊笑中，不知不覺練習了 50 次目標發音！"
+  },
+  {
+    id: 7,
+    question: "語言治療師如何知道個案「到底出了什麼問題」？",
+    optionA: "透過晤談、觀察、標準化或非標準化評估、測驗與臨床分析，了解個案的能力與困難，再進行治療規劃。",
+    optionB: "聽他講幾句話就知道了，畢竟語言治療師耳朵很專業，通常「聽一下就知道哪裡怪怪的」。",
+    correct: "A",
+    explanation: "語言治療是基於實證醫學。我們絕非只憑「感覺」或隨便聽兩句下診斷，而是透過國際或本土標準化評估工具、個案史晤談、跨領域報告，再進行精密的臨床推理與分析。",
+    meme: "👂 學生想像的治療師：「嗯……聽你講這句，你構音異常喔！」(人形語音辨識器？)\n📝 真正的語言治療師：晤談 + 標準化量表測驗 + 口語樣本分析 + 口腔結構檢查 ➔ 綜合臨床診斷"
+  },
+  {
+    id: 8,
+    question: "語言治療師怎麼決定「要怎麼治療」？",
+    optionA: "根據評估結果、個案需求、能力、生活情境與治療目標，設計個別化的治療計畫。",
+    optionB: "有一套「語言治療萬用招式」，看到什麼問題就照表操課，大家一起念、一起說、一起練就好了。",
+    correct: "A",
+    explanation: "每個個案都是獨一無二的！語言治療沒有「萬用偏方」。治療師必須針對個案的興趣、家庭支持度、生理限制等，客製化設計「個別化治療計畫 (IEP)」，才能發揮最大成效。",
+    meme: "❌ 語言治療師萬能咒語：「來，跟我念一次！」、「對，再念一次！」\n✅ 實證治療金字塔：\nAssessment (評估) ➔ Reasoning (推理) ➔ Goal Setting (設定目標) ➔ Intervention (客製化介入) ➔ Re-evaluation (再評估)"
+  },
+  {
+    id: 9,
+    question: "語言治療師除了「做治療」之外，還要做什麼？",
+    optionA: "還需要進行評估、撰寫紀錄、擬定治療計畫、追蹤成效，並與家屬、教師及其他專業人員溝通合作。",
+    optionB: "只要把治療做好就好了，其他就是行政人員或家長的事情；治療師下課就可以收工。",
+    correct: "A",
+    explanation: "臨床工作只是語言治療師的一小部分。撰寫病歷紀錄、跨專業團隊會議、與家長進行衛教與家庭作業諮詢、製作客製化教具，這些隱形工作往往佔據了治療師許多心力。",
+    meme: "🧸 學生想像的語言治療師: 跟小孩玩 ➔ 陪大人聊天 ➔ 準時打卡下班\n💻 真正的語言治療師: 治療 ➔ 寫紀錄 ➔ 製作教材 ➔ 家長諮詢 ➔ 與醫師/老師開會 ➔ 繼續寫病歷"
+  },
+  {
+    id: 10,
+    question: "語言治療系畢業後，職涯發展通常是什麼樣子？",
+    optionA: "多數畢業生會以醫院或診所的臨床工作為主要發展方向，再依累積的臨床經驗選擇兒童、成人、聲音、吞嚥等專業領域。",
+    optionB: "畢業後可以依興趣與專業能力選擇不同服務場域與族群，例如醫院、診所、學校、早療、長照等，並在工作中逐步建立自己的專業方向。",
+    correct: "B",
+    explanation: "大一新生的職涯想像常侷限於醫院。其實語言治療系的出路非常有彈性，你可以在早療中心成為明星治療師，也可以在長照體系深入社區，甚至在科技業參與語音辨識、AAC 輔具開發，職涯廣度超乎想像！",
+    meme: "🚀 傳統路線：畢業 ➔ 進入醫院復健科 ➔ 升任資深治療師\n🌈 現代多元路線：醫療臨床、特教學校支援、社區長照機構、自行創業開設治療所、AI 語音科技顧問"
+  }
+];
 
 // DOM 元素選取
 const connStatus = document.getElementById("connStatus");
-const manualConnectBox = document.getElementById("manualConnectBox");
-const manualCodeInput = document.getElementById("manualCodeInput");
 const activeQuizArea = document.getElementById("activeQuizArea");
 const qNum = document.getElementById("qNum");
 const qText = document.getElementById("qText");
@@ -26,341 +134,186 @@ const studentExplanation = document.getElementById("studentExplanation");
 const evalTitle = document.getElementById("evalTitle");
 const studentExplanationText = document.getElementById("studentExplanationText");
 const studentMeme = document.getElementById("studentMeme");
+const liveBarA = document.getElementById("liveBarA");
+const liveBarB = document.getElementById("liveBarB");
+const liveCountA = document.getElementById("liveCountA");
+const liveCountB = document.getElementById("liveCountB");
+const liveTotal = document.getElementById("liveTotal");
 
-// 頁面初始化
+// 頁面初始化：連上 Firebase 並監聽狀態與票數
 window.addEventListener("DOMContentLoaded", () => {
-  if (isLocalMode) {
-    connStatus.textContent = "🟢 本地連線已建立 (區域網輪詢)";
-    connStatus.className = "student-status-indicator correct";
-    manualConnectBox.style.display = "none";
-    activeQuizArea.style.display = "block";
-    
-    setupLocalClientPolling();
-  } else {
-    const urlParams = new URLSearchParams(window.location.search);
-    const hostId = urlParams.get("hostId");
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
 
-    // 初始化 Peer，明確設定 wss 443 埠與 STUN 伺服器
-    peer = new Peer({
-      host: '0.peerjs.com',
-      port: 443,
-      secure: true,
-      pingInterval: 3000,
-      config: {
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-          { urls: 'stun:stun2.l.google.com:19302' }
-        ]
-      },
-      debug: 1
-    });
+  db.ref('.info/connected').on('value', (snap) => {
+    if (snap.val()) {
+      connStatus.textContent = '🟢 已連線，等老師出題就可以投票！';
+      connStatus.className = 'student-status-indicator correct';
+    } else {
+      connStatus.textContent = '🔴 連線中斷，請檢查網路或重新整理！';
+      connStatus.className = 'student-status-indicator incorrect';
+    }
+  });
 
-    peer.on("open", (id) => {
-      console.log("Student Peer opened with ID:", id);
-      if (hostId) {
-        connectToHost(hostId);
-      } else {
-        // 顯示手動輸入代碼連線框
-        connStatus.textContent = "📲 請手動輸入大螢幕連線代碼";
-        manualConnectBox.style.display = "block";
-      }
-    });
+  db.ref(FB_ROOT + '/state').on('value', (snap) => {
+    const v = snap.val();
+    if (v) {
+      state.currentQuestion = v.currentQuestion || 0;
+      state.revealed = v.revealed || {};
+      state.voteClosed = v.voteClosed || {};
+      state.round = v.round || 0;
+    }
+    render();
+  });
 
-    peer.on("error", (err) => {
-      console.error("PeerJS Client Error:", err);
-      connStatus.textContent = "❌ 連線錯誤，請刷新網頁！";
-      connStatus.className = "student-status-indicator incorrect";
-    });
-  }
+  db.ref(FB_ROOT + '/votes').on('value', (snap) => {
+    fbVotes = snap.val() || {};
+    render();
+  });
 });
 
-// 手動輸入房間代碼連線
-function connectManually() {
-  const code = manualCodeInput.value.trim().toUpperCase();
-  if (code.length === 4) {
-    const hostId = `SLP-${code}`;
-    connectToHost(hostId);
+// 統計某一題的票數
+function tally(idx) {
+  const t = { A: 0, B: 0 };
+  const q = fbVotes[idx];
+  if (q) {
+    Object.keys(q).forEach((cid) => {
+      if (q[cid] === 'A') t.A++;
+      else if (q[cid] === 'B') t.B++;
+    });
+  }
+  return t;
+}
+
+// 依據目前狀態渲染畫面
+function render() {
+  const idx = state.currentQuestion;
+  const q = QUESTIONS[idx];
+  if (!q) return;
+
+  activeQuizArea.style.display = 'block';
+  qNum.textContent = 'Q' + q.id;
+  qText.textContent = q.question;
+  labelOptA.textContent = q.optionA;
+  labelOptB.textContent = q.optionB;
+
+  const mine = myVotes[vkey()];
+  const closed = !!state.voteClosed[idx];
+  const revealed = !!state.revealed[idx];
+
+  if (revealed) {
+    showExplanation(q.correct, q.explanation, q.meme);
+  } else if (mine) {
+    showVotedFeedback(mine);
+  } else if (closed) {
+    showVoteClosed();
   } else {
-    alert("請輸入完整的 4 位數代碼！");
+    resetChoiceUI();
   }
+
+  updateLiveResults();
 }
 
-// 與 Host (投影幕) 建立連線
-function connectToHost(hostId) {
-  connStatus.textContent = `🔌 正在連線至大螢幕 [${hostId}]...`;
-  connStatus.className = "student-status-indicator";
-
-  conn = peer.connect(hostId, {
-    reliable: true
-  });
-
-  conn.on("open", () => {
-    console.log("Connected to Teacher Host:", hostId);
-    connStatus.textContent = "🟢 已成功連線至投影大螢幕！";
-    connStatus.className = "student-status-indicator correct";
-    
-    // 隱藏手動輸入區域
-    manualConnectBox.style.display = "none";
-    activeQuizArea.style.display = "block";
-  });
-
-  conn.on("data", (data) => {
-    handleServerMessage(data);
-  });
-
-  conn.on("close", () => {
-    console.log("Connection closed by Host");
-    connStatus.textContent = "🔴 與教師投影幕連線中斷！";
-    connStatus.className = "student-status-indicator incorrect";
-    activeQuizArea.style.display = "none";
-    manualConnectBox.style.display = "block";
-  });
+// 重設投票選項 UI
+function resetChoiceUI() {
+  optionsContainer.style.display = 'block';
+  btnOptA.className = 'student-card';
+  btnOptB.className = 'student-card';
+  voteFeedback.style.display = 'none';
+  studentExplanation.style.display = 'none';
 }
 
-// 處理來自教師大螢幕 (Host) 的指令
-function handleServerMessage(data) {
-  console.log("Received server data:", data);
-
-  switch (data.type) {
-    case "SYNC":
-    case "CHANGE_QUESTION":
-      currentQuestionIndex = data.currentQuestion;
-      currentQuestionData = data.question;
-      
-      // 更新題目文字與選項文字
-      qNum.textContent = `Q${currentQuestionData.id}`;
-      qText.textContent = currentQuestionData.question;
-      labelOptA.textContent = currentQuestionData.optionA;
-      labelOptB.textContent = currentQuestionData.optionB;
-
-      // 重設 UI
-      btnOptA.className = "student-card";
-      btnOptB.className = "student-card";
-      optionsContainer.style.display = "block";
-      voteFeedback.style.display = "none";
-      studentExplanation.style.display = "none";
-
-      // 檢查此人在此題是否投過票
-      // 伺服器發送的 data.chosen 是針對此生的連線歷史，我們也結合本地緩存 myVotes
-      const myChoice = data.chosen || myVotes[currentQuestionIndex];
-      
-      if (myChoice) {
-        // 如果已投票
-        myVotes[currentQuestionIndex] = myChoice; // 同步緩存
-        showVotedFeedback(myChoice);
-      } else if (data.voteClosed) {
-        // 如果未投票但投票已被老師或人數截止
-        showVoteClosed();
-      }
-
-      // 檢查是否已公佈答案
-      if (data.revealed) {
-        showExplanation(data.correct, data.explanation, data.meme);
-      }
-      break;
-
-    case "STOP_VOTE":
-      if (data.questionIdx === currentQuestionIndex) {
-        // 若此題投票截止，且該生仍未投票，鎖定投票按鈕
-        if (!myVotes[currentQuestionIndex]) {
-          showVoteClosed();
-        }
-      }
-      break;
-
-    case "REVEAL_ANSWER":
-      if (data.questionIdx === currentQuestionIndex) {
-        showExplanation(data.correct, data.explanation, data.meme);
-      }
-      break;
-
-    case "VOTE_CONFIRMED":
-      // 投票被 Host 收理並確認
-      myVotes[currentQuestionIndex] = data.option;
-      showVotedFeedback(data.option);
-      break;
-
-    case "VOTE_REJECTED":
-      alert(`投票失敗：${data.reason}`);
-      // 恢復按鈕狀態
-      btnOptA.classList.remove("disabled");
-      btnOptB.classList.remove("disabled");
-      break;
-  }
+// 更新即時投票長條圖
+function updateLiveResults() {
+  const idx = state.currentQuestion;
+  const t = tally(idx);
+  const total = t.A + t.B;
+  const pctA = total ? Math.round((t.A / total) * 100) : 0;
+  const pctB = total ? 100 - pctA : 0;
+  liveBarA.style.width = pctA + '%';
+  liveBarB.style.width = pctB + '%';
+  liveCountA.textContent = t.A + ' 票・' + pctA + '%';
+  liveCountB.textContent = t.B + ' 票・' + pctB + '%';
+  liveTotal.textContent = '共 ' + total + ' 票';
 }
 
-// 提交投票
+// 提交投票（直接寫入 Firebase）
 function submitVote(option) {
-  if (myVotes[currentQuestionIndex]) {
-    alert("本題您已經投過票囉！");
+  const idx = state.currentQuestion;
+  if (myVotes[vkey()]) {
+    alert('本題您已經投過票囉！');
+    return;
+  }
+  if (state.voteClosed[idx] || state.revealed[idx]) {
+    showVoteClosed();
+    return;
+  }
+  if (!db) {
+    alert('尚未連線完成，請稍候再試！');
     return;
   }
 
-  if (isLocalMode) {
-    // 本地模式：發送 API 投票
-    btnOptA.className = "student-card disabled";
-    btnOptB.className = "student-card disabled";
+  // 暫時鎖定按鈕防止連點
+  btnOptA.className = 'student-card disabled';
+  btnOptB.className = 'student-card disabled';
 
-    fetch('/api/vote', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ option: option })
+  db.ref(FB_ROOT + '/votes/' + idx + '/' + CID).set(option)
+    .then(() => {
+      myVotes[vkey()] = option;
+      localStorage.setItem('slp_myvotes', JSON.stringify(myVotes));
+      render();
     })
-    .then(res => {
-      if (res.ok) {
-        myVotes[currentQuestionIndex] = option;
-        showVotedFeedback(option);
-      } else {
-        res.json().then(errData => {
-          alert(`投票失敗：${errData.reason || '伺服器拒絕'}`);
-          btnOptA.classList.remove("disabled");
-          btnOptB.classList.remove("disabled");
-        });
-      }
-    })
-    .catch(err => {
-      console.error("Vote API error:", err);
-      alert("無法連上本地伺服器投開票，請檢查 Wi-Fi 連線！");
-      btnOptA.classList.remove("disabled");
-      btnOptB.classList.remove("disabled");
+    .catch((err) => {
+      console.error('Vote error:', err);
+      alert('投票失敗，請檢查網路後重試！');
+      btnOptA.className = 'student-card';
+      btnOptB.className = 'student-card';
     });
-  } else {
-    // 雲端 WebRTC 模式
-    if (!conn || !conn.open) {
-      alert("與大螢幕連線中斷，無法投票！");
-      return;
-    }
-    // 暫時鎖定按鈕防止連點
-    btnOptA.className = "student-card disabled";
-    btnOptB.className = "student-card disabled";
-
-    // 發送投票指令
-    conn.send({
-      type: "VOTE",
-      option: option
-    });
-  }
 }
 
 // 顯示投票成功回饋
 function showVotedFeedback(chosenOption) {
-  optionsContainer.style.display = "none";
-  voteFeedback.style.display = "block";
-  voteFeedback.textContent = `📥 您已投給：【選項 ${chosenOption}】，請等待老師公佈答案...`;
+  optionsContainer.style.display = 'none';
+  voteFeedback.style.display = 'block';
+  voteFeedback.textContent = '📥 您已投給：【選項 ' + chosenOption + '】，請等待老師公佈答案...';
 }
 
 // 顯示投票截止狀態
 function showVoteClosed() {
-  btnOptA.className = "student-card disabled";
-  btnOptB.className = "student-card disabled";
-  voteFeedback.style.display = "block";
-  voteFeedback.textContent = "🚫 本題投票已截止，未投出票數。";
+  btnOptA.className = 'student-card disabled';
+  btnOptB.className = 'student-card disabled';
+  voteFeedback.style.display = 'block';
+  voteFeedback.textContent = '🚫 本題投票已截止，未投出票數。';
 }
 
 // 展示答案公佈結果與解析
 function showExplanation(correctOption, explanation, meme) {
-  optionsContainer.style.display = "none";
-  voteFeedback.style.display = "none";
+  optionsContainer.style.display = 'none';
+  voteFeedback.style.display = 'none';
 
-  const myChoice = myVotes[currentQuestionIndex];
-  
+  const myChoice = myVotes[vkey()];
+
   if (myChoice) {
     if (myChoice === correctOption) {
-      evalTitle.textContent = "🎉 答對了！做得好！";
-      evalTitle.style.color = "var(--accent-green-dark)";
-      studentExplanation.className = "explanation-section open";
-      studentExplanation.style.backgroundColor = "var(--accent-green)";
+      evalTitle.textContent = '🎉 答對了！做得好！';
+      evalTitle.style.color = 'var(--accent-green-dark)';
+      studentExplanation.className = 'explanation-section open';
+      studentExplanation.style.backgroundColor = 'var(--accent-green)';
     } else {
-      evalTitle.textContent = "❌ 答錯了！這題是陷阱喔！";
-      evalTitle.style.color = "var(--accent-red-dark)";
-      studentExplanation.className = "explanation-section open";
-      studentExplanation.style.backgroundColor = "var(--accent-red)";
+      evalTitle.textContent = '❌ 答錯了！這題是陷阱喔！';
+      evalTitle.style.color = 'var(--accent-red-dark)';
+      studentExplanation.className = 'explanation-section open';
+      studentExplanation.style.backgroundColor = 'var(--accent-red)';
     }
   } else {
     // 沒投票
-    evalTitle.textContent = `💡 正確答案是 【${correctOption}】`;
-    evalTitle.style.color = "var(--text-main)";
-    studentExplanation.className = "explanation-section open";
-    studentExplanation.style.backgroundColor = "var(--accent-yellow)";
+    evalTitle.textContent = '💡 正確答案是 【' + correctOption + '】';
+    evalTitle.style.color = 'var(--text-main)';
+    studentExplanation.className = 'explanation-section open';
+    studentExplanation.style.backgroundColor = 'var(--accent-yellow)';
   }
 
   studentExplanationText.textContent = explanation;
   studentMeme.textContent = meme;
-  studentExplanation.style.display = "block";
-}
-
-// 本地模式：學生端 API 輪詢狀態
-let clientPollingTimer = null;
-const quizData = [
-  { id: 1, question: "學語言治療的小孩，是不是長大就一定會說話？", optionA: "沒錯！長大自然就會了", optionB: "不一定！需針對性評估與介入" },
-  { id: 2, question: "語言治療師的工作，僅僅是教講話不清楚的人講話嗎？", optionA: "對，就是俗稱的「剪舌頭」與發音練習", optionB: "不只！還包含吞嚥、聽覺復健與嗓音治療" },
-  { id: 3, question: "如果家人中風後「吃東西會嗆咳」，應該看哪一個專業？", optionA: "復健科醫師與語言治療師 (吞嚥介入)", optionB: "耳鼻喉科醫師或營養師即可" },
-  { id: 4, question: "幼兒「臭乳呆」說話不清楚，幾歲是接受語言治療的黃金期？", optionA: "四歲左右 (構音發展漸趨成熟後)", optionB: "越早越好，一歲就該去上課" },
-  { id: 5, question: "口吃 (講話結巴) 的人，是因為喉嚨有問題或太緊張嗎？", optionA: "是的，多深呼吸放鬆就沒事了", optionB: "不是！口吃涉及神經、語言等多重因素" },
-  { id: 6, question: "戴上助聽器後，聽損的小孩就能立刻像常人一樣聽懂說話嗎？", optionA: "可以，聽得到就代表聽得懂", optionB: "不行！還需要長期的「聽覺言語復健」" },
-  { id: 7, question: "喉嚨沙啞 (如老師、歌手失聲)，語言治療師能幫上忙嗎？", optionA: "沒辦法，這需要動手術或吃藥", optionB: "可以！能進行「嗓音治療」與用聲衛教" },
-  { id: 8, question: "發展遲緩的小孩，只要一直跟他說話，他就會開口嗎？", optionA: "會的，刺激夠多自然就會開口", optionB: "不夠！必須引導口語表達與社交互動溝通" },
-  { id: 9, question: "語言治療師主要在哪裡服務？", optionA: "只限於各大醫院的復健科", optionB: "醫院、診所、特教學校與居家照護機構" },
-  { id: 10, question: "要成為合格 of 語言治療師，需要具備什麼條件？", optionA: "相關學系畢業並通過國家專門職業專技高考", optionB: "修完相關學分並拿到推廣教育證書即可" }
-];
-
-function setupLocalClientPolling() {
-  if (clientPollingTimer) clearInterval(clientPollingTimer);
-  pollLocalClientState();
-  clientPollingTimer = setInterval(pollLocalClientState, 800);
-}
-
-function pollLocalClientState() {
-  fetch('/api/state')
-    .then(res => res.json())
-    .then(data => {
-      const serverIdx = data.currentQuestion;
-      
-      // 如果伺服器的題目索引改變了，重置學生端 UI
-      if (currentQuestionIndex !== serverIdx) {
-        currentQuestionIndex = serverIdx;
-        currentQuestionData = quizData[serverIdx];
-        
-        qNum.textContent = `Q${currentQuestionData.id}`;
-        qText.textContent = currentQuestionData.question;
-        labelOptA.textContent = currentQuestionData.optionA;
-        labelOptB.textContent = currentQuestionData.optionB;
-
-        btnOptA.className = "student-card";
-        btnOptB.className = "student-card";
-        optionsContainer.style.display = "block";
-        voteFeedback.style.display = "none";
-        studentExplanation.style.display = "none";
-      }
-
-      // 同步投票結果與截止狀態
-      const myChoice = myVotes[currentQuestionIndex];
-      if (myChoice) {
-        showVotedFeedback(myChoice);
-      } else if (data.voteClosed) {
-        showVoteClosed();
-      }
-
-      // 同步解析與答案公佈
-      if (data.revealed) {
-        // 本地端補齊對應的答案解析
-        const q = currentQuestionData;
-        const explanations = [
-          { correct: "B", explanation: "說話是複雜的皮質整合過程。許多遲緩幼兒或有神經損傷者，長大後依然需要經過個別化的治療設計與溝通輔助系統 (AAC)，才能建立自主口語能力。", meme: "💡 孩子不是小盆栽，每天澆水 (聽大人說話) 就會自動發芽長大喔！專業的早期評估與介入才是關鍵。" },
-          { correct: "B", explanation: "語言治療學系主要涵蓋六大範疇：構音、聲音、口吃、吞嚥、語言與聽覺復健。我們協助人們吃得安全、說得清楚、聽得明白！", meme: "💡 喉嚨痛找耳鼻喉科，但吃不下飯 (吞嚥困難)、說不出話 (嗓音障礙)，那就是我們的超人守護領域了！" },
-          { correct: "A", explanation: "中風病患常伴隨「吸入性肺炎」致死風險，這是因為吞嚥肌群失調。語言治療師會進行吞嚥功能評估，設計安全進食質地與吞嚥手法訓練。", meme: "💡 每一次吸入性嗆咳，都是在和肺炎死神拔河。守護這份吃東西的尊嚴，我們當仁不讓！" },
-          { correct: "A", explanation: "絕大多數構音器官與生理發展在 3 歲半到 4 歲左右漸趨成熟，因此 4 歲是精準診斷與介入構音異常 (臭乳呆) 的黃金時期。", meme: "💡 2歲講「草莓」講成「倒楣」很可愛，但到了4歲如果講「去學校」還是講成「去學小」，那就需要找專業評估囉！" },
-          { correct: "B", explanation: "口吃並非因呼吸急促或緊張引起，它與大腦運動神經控制、語言規劃能力有關。過度的「放鬆」勸導往往會增加個案心理負擔。", meme: "💡 拜託不要再對結巴的人說「你放鬆慢慢講」了！這只會讓他們對自己的口語缺陷更加敏感和緊張喔。" },
-          { correct: "B", explanation: "助聽器僅是把「音量放大」，大腦的聽覺皮質已許久未受刺激，需要進行長期的「聽覺言語法 (AVT)」訓練，重新學習聽音與辨音。", meme: "💡 這就像是配了高度近視眼鏡，但大腦還是需要重新適應和看懂這個世界是同一個道理。" },
-          { correct: "B", explanation: "長期用聲不當會導致聲帶結節或息肉。語言治療師會設計專業嗓音訓練，協助聲樂家、老師、客服人員以正確共鳴位置發聲。", meme: "💡 吼叫一時爽，嗓子火葬場。教你怎麼不費力地「大聲說愛」，正是我們的拿手好戲。" },
-          { correct: "B", explanation: "語言發展遲緩需要的是「功能性溝通情境」，而非成人單方面的資訊刺激。透過互動引導、手勢、視覺支持 (AAC) 來激發主動表達意圖。", meme: "💡 在孩子身邊像個收音機一樣一直碎碎念是沒用的，要建立雙向互動、共同關注，才是大腦語言區開展的鑰匙。" },
-          { correct: "B", explanation: "除了各大醫院，語言治療師大量服務於社區復健科診所、特教學校、早期療育機構、行動長照居家照護團隊，甚至包含高齡衰弱防跌預防領域。", meme: "💡 只要有人類需要溝通與吞嚥的地方，就有我們用專業傳遞溫暖的身影！" },
-          { correct: "A", explanation: "語言治療師是國家高階醫事專技人員。必須完成教育部認可的聽語學系四年學士或碩士學位與規定時數實習，並考取專技高考語言治療師證照始得執業。", meme: "💡 這張高考合格證書，是我們用無數個實習熬夜的夜晚與精準專業能力換來的專業徽章！" }
-        ];
-        const currentExp = explanations[currentQuestionIndex];
-        showExplanation(currentExp.correct, currentExp.explanation, currentExp.meme);
-      }
-    })
-    .catch(err => console.error("Poll local client state error:", err));
+  studentExplanation.style.display = 'block';
 }
