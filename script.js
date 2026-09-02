@@ -781,7 +781,7 @@ function restartQuiz() {
         <span id="connectionText">正在初始化即時連線...</span>
       </div>
       <div class="student-count">
-        👥 已連線學生：<span id="connectedCount" class="badge">0</span> 人
+        👥 已參與投票：<span id="connectedCount" class="badge">0</span> 人
       </div>
     </div>
 
