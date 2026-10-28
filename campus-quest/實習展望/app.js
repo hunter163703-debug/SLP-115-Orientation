@@ -9,9 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
         '苗栗縣': ['苗栗縣'],
         '臺中市': ['臺中市'],
         '彰化縣': ['彰化縣'],
-        '嘉義縣市': ['嘉義市', '嘉義縣'],
-        '高雄市': ['高雄市'],
-        '宜蘭縣': ['宜蘭縣']
+        '南投縣': ['南投縣'],
+        '雲林縣': ['雲林縣'],
+        '臺南市': ['臺南市'],
+        '高雄市': ['高雄市']
     };
 
     // State Variables
@@ -99,11 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
         countyHospitalList.innerHTML = '';
         currentCountyHospitals.forEach(h => {
             const item = document.createElement('div');
-            item.className = 'county-hospital-item';
+            item.className = 'county-hospital-item' + (h.isNew ? ' is-new' : '');
+            const photoMeta = h.isNew
+                ? '115 學年度新增實習站'
+                : (h.photos.length > 0 ? `${h.photos.length} 張環境照片` : '單位特色介紹');
+            const itemTitle = h.isNew ? `115 新增 ${h.name}` : h.name;
             item.innerHTML = `
                 <div>
-                    <div class="hospital-item-title">${h.name}</div>
-                    <div class="hospital-item-sub"><i class="fa-solid fa-location-dot"></i> ${h.city} ${h.district} • ${h.photos.length} 張環境照片</div>
+                    <div class="hospital-item-title">${itemTitle}</div>
+                    <div class="hospital-item-sub"><i class="fa-solid fa-location-dot"></i> ${h.city} ${h.district} • ${photoMeta}</div>
                 </div>
                 <div class="hospital-item-action">
                     檢視特色與照片 <i class="fa-solid fa-chevron-right"></i>
@@ -138,12 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
         countyModal.style.display = 'none';
 
         detailCityTag.textContent = `${hospital.city} ${hospital.region}區`;
-        detailHospitalName.textContent = hospital.name;
+        detailHospitalName.textContent = hospital.isNew ? `115 新增 ${hospital.name}` : hospital.name;
         detailDistrict.textContent = `${hospital.city} ${hospital.district}`;
         detailPhotoCount.textContent = hospital.photos.length;
 
-        // Activate Photos Tab by default
-        detailTabBtns[0].click();
+        const hasPhotos = hospital.photos.length > 0;
+
+        // Activate Photos tab by default (fall back to info tab when no photos)
+        detailTabBtns[hasPhotos ? 0 : 1].click();
 
         // Setup Carousel & Info
         setupThumbnails(hospital.photos);
@@ -211,7 +218,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCarousel() {
-        if (!currentHospital || currentHospital.photos.length === 0) return;
+        if (!currentHospital) return;
+
+        if (currentHospital.photos.length === 0) {
+            carouselMainImg.removeAttribute('src');
+            carouselMainImg.alt = '尚無環境照片';
+            carouselMainImg.classList.add('carousel-empty-img');
+            carouselCounter.textContent = '尚無環境照片';
+            return;
+        }
+        carouselMainImg.classList.remove('carousel-empty-img');
 
         const photoUrl = currentHospital.photos[currentPhotoIndex];
         carouselMainImg.src = photoUrl;

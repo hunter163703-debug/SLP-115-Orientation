@@ -1,6 +1,8 @@
 *.mp4
 *.mov
 *.pdf
+*.xlsx
+*.xls
 .tempmediaStorage/
 __pycache__/
 *.pyc

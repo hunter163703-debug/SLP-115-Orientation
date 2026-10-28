@@ -414,6 +414,22 @@ body {
     object-fit: contain;
     cursor: zoom-in;
 }
+.carousel-stage img.carousel-empty-img { display: none; }.carousel-stage:has(.carousel-empty-img)::after {
+    content: "尚無環境照片，請切換至「特色與優缺點」分頁";
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+.county-hospital-item.is-new {
+    border-color: rgba(251, 191, 36, 0.55);
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.10), rgba(25, 38, 48, 0.6));
+}
+.county-hospital-item.is-new .hospital-item-title {
+    color: #FBBF24;
+}
+.county-hospital-item.is-new .hospital-item-sub {
+    color: rgba(251, 191, 36, 0.85);
+}
 .nav-btn {
     position: absolute;
     top: 50%;
